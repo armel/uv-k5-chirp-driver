@@ -473,7 +473,7 @@ FLOCK_LIST = ["DEFAULT+ (137-174, 400-470 + Tx200, Tx350, Tx500)",
               "Unlock All"]
 
 SCANRESUME_LIST = ["Listen 5 seconds and resume (TIMEOUT)",
-                   "Listen until signal dissapears (CARRIER)",
+                   "Listen until signal disapears (CARRIER)",
                    "Stop scanning after receiving a signal (STOP)"]
 WELCOME_LIST = ["Full screen test (FULL)", "User message (MESSAGE)", "Battery voltage (VOLTAGE)", "NONE"]
 VOICE_LIST = ["OFF", "Chinese", "English"]
@@ -2355,7 +2355,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         name = "_mem.cal.xtalFreqLow"
         temp_val = min_max_def(eval(name), -1000, 1000, 0)
         val = RadioSettingValueInteger(-1000, 1000, temp_val)
-        radio_setting = RadioSetting(name, "Xtal frequecy low", val)
+        radio_setting = RadioSetting(name, "Xtal frequency low", val)
         radio_setting_group.append(radio_setting)
 
         name = "_mem.cal.volumeGain"
