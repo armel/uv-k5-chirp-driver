@@ -1490,7 +1490,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                 _mem.dtmf.decode_response = int(element.value)
 
             elif elname == "dtmf_auto_reset_time":
-                _mem.dtmf.auto_reset_time = int(element.value))
+                _mem.dtmf.auto_reset_time = int(element.value)
 
             elif elname == "dtmf_preload_time":
                 _mem.dtmf.preload_time = int(int(element.value)/10)
