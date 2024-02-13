@@ -77,6 +77,6 @@ when finish, the radio will reboot after.
 This will ONLY and ONLY upload the setting of F4HWN to the radio, all other setting in chirp will stay in chirp.
 ******************************************************************************************************************
 
-To upload all the other in chirp setting to the radio, remove the selection of the Upload F4HWN setting to radio (1) and then upload to the radio (2), then press ok, the upload will take some time, when finish the radio will reboot.
+To upload all the other setting in chirp to the radio, remove the selection of the Upload F4HWN setting to radio (1) and then upload to the radio (2), then press ok, the upload will take some time, when finish the radio will reboot.
 
 Enjoy.
