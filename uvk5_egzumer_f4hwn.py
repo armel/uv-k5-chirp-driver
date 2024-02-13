@@ -53,7 +53,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver:2024/02/09 (c) EGZUMER+F4HWN v1.8"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/12 (c) EGZUMER + F4HWN v1.8"
 DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom-feat-F4HWN"
 
 VALEUR_COMPILER = "ENABLE"
@@ -341,15 +341,18 @@ u8 eeprom0x1ff2;
 u8 eeprom0x1ff3;
 u8 eeprom0x1ff4;
 
-u8 set_futur:2,
+u8 set_futur:1,
+set_met:1,
 set_lck:1,
 set_inv:1,
 set_contrast:4;
 
 u8 set_tot:4,
+set_eot:4;
+
+u8 set_low:4,
 set_ptt:4;
 
-u8 set_low;
 u8 eeprom0x1ff8;
 u8 eeprom0x1ff9;
 u8 eeprom0x1ffa;
@@ -376,11 +379,18 @@ SET_LOW_LIST = ["125mW", "250mW", "500mW", "1W", "< 20mW"]
 # SET_PTT f4hwn
 SET_PTT_LIST = ["CLASSIC", "ONEPUSH"]
 
-# SET_TOT f4hwn
-SET_TOT_LIST = ["OFF", "SOUND", "VISUAL", "ALL"]
+# SET_TOT and SET_EOT f4hwn
+SET_TOT_EOT_LIST = ["OFF", "SOUND", "VISUAL", "ALL"]
 
 # SET_OFF_ON f4hwn
 SET_OFF_ON_LIST = ["OFF", "ON"]
+
+# SET_lck f4hwn
+SET_LCK_LIST = ["KEYS", "KEYS+PTT"]
+
+# SET_MET f4hwn
+SET_MET_LIST = ["TINY", "CLASSIC"]
+
 
 # dtmf_flags
 PTTID_LIST = ["OFF", "UP CODE", "DOWN CODE", "UP+DOWN CODE", "APOLLO QUINDAR"]
@@ -1435,29 +1445,37 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             elif elname == "Battery_type":
                 _mem.Battery_type = int(element.value)
 
-            # set low_power_liste f4hwn
+            # set low_power f4hwn
             elif elname == "set_low":
                 _mem.set_low = int(element.value)
 
-            # set ptt_list f4hwn
+            # set ptt f4hwn
             elif elname == "set_ptt":
                 _mem.set_ptt = int(element.value)
 
-            # set tot_list f4hwn
+            # set tot f4hwn
             elif elname == "set_tot":
                 _mem.set_tot = int(element.value)
+
+            # set eot f4hwn
+            elif elname == "set_eot":
+                _mem.set_eot = int(element.value)
 
             # set_contrast f4hwn
             elif elname == "set_contrast":
                 _mem.set_contrast = int(element.value)
 
-            # set inv_list f4hwn
+            # set inv f4hwn
             elif elname == "set_inv":
                 _mem.set_inv = int(element.value)
 
             # set lck f4hwn
             elif elname == "set_lck":
                 _mem.set_lck = int(element.value)
+
+            # set met f4hwn
+            elif elname == "set_met":
+                _mem.set_met = int(element.value)
                                
             # fm radio
             for i in range(1, 21):
@@ -1918,7 +1936,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         # Set_Low_Power f4hwn
         tmpsetlow = list_def(_mem.set_low, SET_LOW_LIST, 0)
         val = RadioSettingValueList(SET_LOW_LIST, SET_LOW_LIST[tmpsetlow])
-        SetLowSetting = RadioSetting("set_low", "Set The power LOW to specific power (SetLow)", val)
+        SetLowSetting = RadioSetting("set_low", "Set the power LOW level to specific power (SetLow)", val)
 
         # Set_Ptt f4hwn
         tmpsetptt = list_def(_mem.set_ptt, SET_PTT_LIST, 0)
@@ -1926,9 +1944,14 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         SetPttSetting = RadioSetting("set_ptt", "Ptt Mode, Set how react the ptt (SetPtt)", val)
 
         # Set_tot f4hwn
-        tmpsettot = list_def(_mem.set_tot, SET_TOT_LIST, 0)
-        val = RadioSettingValueList(SET_TOT_LIST, SET_TOT_LIST[tmpsettot])
+        tmpsettot = list_def(_mem.set_tot, SET_TOT_EOT_LIST, 0)
+        val = RadioSettingValueList(SET_TOT_EOT_LIST, SET_TOT_EOT_LIST[tmpsettot])
         SetTotSetting = RadioSetting("set_tot", "Set TX timeout indicator (SetTot)", val)
+
+        # Set_eot f4hwn
+        tmpseteot = list_def(_mem.set_eot, SET_TOT_EOT_LIST, 0)
+        val = RadioSettingValueList(SET_TOT_EOT_LIST, SET_TOT_EOT_LIST[tmpseteot])
+        SetEotSetting = RadioSetting("set_eot", " Set End Of Transmission indicator (SetEot)", val)
 
         # Set_contrast f4hwn
         tmpcontrast = min_max_def(_mem.set_contrast, 0, 15, 11)
@@ -1941,9 +1964,14 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         SetInvSetting = RadioSetting("set_inv", "Set inverse lcd (SetInv)", val)
 
         # Set_lck, uses
-        tmpsetlck = list_def(_mem.set_lck, SET_OFF_ON_LIST, 0)
-        val = RadioSettingValueList(SET_OFF_ON_LIST, SET_OFF_ON_LIST[tmpsetlck])
+        tmpsetlck = list_def(_mem.set_lck, SET_LCK_LIST, 0)
+        val = RadioSettingValueList(SET_LCK_LIST, SET_LCK_LIST[tmpsetlck])
         SetLckSetting = RadioSetting("set_lck", "Lock the PTT when keypad is lock (SetLck)", val)
+
+        # Set_met f4hwn
+        tmpsetmet = list_def(_mem.set_met, SET_MET_LIST, 0)
+        val = RadioSettingValueList(SET_MET_LIST, SET_MET_LIST[tmpsetmet])
+        SetMetSetting = RadioSetting("set_met", "Display the Smeter style (SetMet)", val)
 
 
         tmpsq = min_max_def(_mem.squelch, 0, 9, 1)
@@ -2190,7 +2218,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             firmware = self.FIRMWARE_VERSION
 
         append_label(roinfo, "Firmware Version", firmware)
-        append_label(roinfo, "Driver version", DRIVER_VERSION)
+        append_label(roinfo, "Driver Chirp Version", DRIVER_VERSION)
         val = RadioSettingValueString(0,75,DRIVER_VERSION_UPDATE)
         rs = RadioSetting("Update","Lastest driver " + self.MODEL +" copy link:(CTRL-C), paste:(CTRL-V) to your browser :", val)                      
         roinfo.append(rs)
@@ -2377,9 +2405,11 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         basic.append(SetLowSetting)
         basic.append(SetPttSetting)
         basic.append(SetTotSetting)
+        basic.append(SetEotSetting)
         basic.append(contrastSetting)
         basic.append(SetInvSetting)
         basic.append(SetLckSetting)
+        basic.append(SetMetSetting)
         append_label(basic,
                      "=" * 6 + " F4HWN, End Setting " + "=" * 300, "=" * 300)
 
