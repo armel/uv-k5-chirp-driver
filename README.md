@@ -1,6 +1,10 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+You'll find a [short video](https://www.youtube.com/watch?v=02T2ODufZOA) on how to use the Chirp driver on my Youtube channel. Be aware, this video is in french, so activate subtitle if necessary :)
+
+Otherwise, here's how to use it.
+
 To load the driver, few step need to be done the first time you use chirp.
 
 first thing, in chirp, tab Help , select developement mode
