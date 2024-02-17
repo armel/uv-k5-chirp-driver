@@ -35,6 +35,17 @@ import struct
 import logging
 import wx
 
+# to display image
+# from skimage import io
+
+# display image
+#		img = io.imread("sheep.png")
+#		io.imshow(img)
+
+# import sys # to access the system
+# import cv2
+from matplotlib import pyplot as plt
+
 from chirp import chirp_common, directory, bitwise, memmap, errors, util
 from chirp.settings import RadioSetting, RadioSettingGroup, \
     RadioSettingValueBoolean, RadioSettingValueList, \
@@ -53,7 +64,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/16 (c) EGZUMER + F4HWN v1.8.2"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/17 (c) EGZUMER + F4HWN v1.8.3"
 FIRMWARE_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom-feat-F4HWN"
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver"
  
@@ -840,7 +851,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
     NEEDS_COMPAT_SERIAL = False
     FIRMWARE_VERSION = ""
 
-    upload_calibration = False
+#    upload_calibration = False
     upload_f4hwn = False
 
     def _get_bands(self):
@@ -1603,6 +1614,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
             elif elname == "keyM_longpress_action":
                 _mem.keyM_longpress_action = KEYACTIONS_LIST.index(element.value)
+
+            elif elname == "upload_calibration":
+                self._upload_calibration = bool(element.value)
 
             elif element.changed() and elname.startswith("_mem.cal."):
                 exec(elname + " = element.value.get_value()")
