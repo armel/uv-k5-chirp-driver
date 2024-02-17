@@ -35,17 +35,6 @@ import struct
 import logging
 import wx
 
-# to display image
-# from skimage import io
-
-# display image
-#		img = io.imread("sheep.png")
-#		io.imshow(img)
-
-# import sys # to access the system
-# import cv2
-from matplotlib import pyplot as plt
-
 from chirp import chirp_common, directory, bitwise, memmap, errors, util
 from chirp.settings import RadioSetting, RadioSettingGroup, \
     RadioSettingValueBoolean, RadioSettingValueList, \
