@@ -1,6 +1,10 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In the driver chirp for F4HWN version 1.8.2 and futur, their is a textbox with the mouse over option on almost everything. this is to help user to get more info about what is this option is for... :)
+
+![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/22f742e6-2346-4f7e-9c2f-72abc4f4412f)
+
 You'll find a [short video](https://www.youtube.com/watch?v=02T2ODufZOA) on how to use the Chirp driver on my Youtube channel. Be aware, this video is in french, so activate subtitle if necessary :)
 
 Otherwise, here's how to use it.
