@@ -29,7 +29,9 @@
 # change/ modification
 #
 # 2024-02-09 :section password has been commented, because the new chirp give error with int.
-#
+# 2024-02-18 : a bug fix has been remove, that seem not work under mac os.. under investigation..
+#              search for (bugfix calibration)
+
 
 import struct
 import logging
@@ -53,7 +55,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/18 (c) EGZUMER + F4HWN v1.8.4"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/18 (c) EGZUMER + F4HWN v1.9.0"
 FIRMWARE_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom-feat-F4HWN"
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver"
  
@@ -342,7 +344,7 @@ u8 eeprom0x1ff2;
 u8 eeprom0x1ff3;
 u8 eeprom0x1ff4;
 
-u8 set_futur:1,
+u8 set_gui:1,
 set_met:1,
 set_lck:1,
 set_inv:1,
@@ -375,7 +377,7 @@ POWER_MEDIUM = 0b01
 POWER_LOW = 0b00
 
 # SET_LOW_POWER f4hwn
-SET_LOW_LIST = ["125mW", "250mW", "500mW", "1W", "< 20mW"]
+SET_LOW_LIST = [ "< 20mW", "125mW", "250mW", "500mW", "1W"]
 
 # SET_PTT f4hwn
 SET_PTT_LIST = ["CLASSIC", "ONEPUSH"]
@@ -389,7 +391,7 @@ SET_OFF_ON_LIST = ["OFF", "ON"]
 # SET_lck f4hwn
 SET_LCK_LIST = ["KEYS", "KEYS+PTT"]
 
-# SET_MET f4hwn
+# SET_MET SET_GUI f4hwn
 SET_MET_LIST = ["TINY", "CLASSIC"]
 
 
@@ -840,6 +842,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
     NEEDS_COMPAT_SERIAL = False
     FIRMWARE_VERSION = ""
 
+# this change to send power level chan in the calibration but under macos it give error
+# bugfix calibration : put in comment next line: upload_calibration = False
     upload_calibration = False
     upload_f4hwn = False
 
@@ -1478,6 +1482,10 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             # set met f4hwn
             elif elname == "set_met":
                 _mem.set_met = int(element.value)
+
+            # set gui f4hwn
+            elif elname == "set_gui":
+                _mem.set_gui = int(element.value)
                                
             # fm radio
             for i in range(1, 21):
@@ -1604,6 +1612,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             elif elname == "keyM_longpress_action":
                 _mem.keyM_longpress_action = KEYACTIONS_LIST.index(element.value)
 
+# this change to send power level chan in the calibration but under macos it give error
+# bugfix calibration : remove the comment on next 2 line:
 #            elif elname == "upload_calibration":
 #                self._upload_calibration = bool(element.value)
 
@@ -1621,7 +1631,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         unlock = RadioSettingGroup("unlock", "Unlock Settings")
         fmradio = RadioSettingGroup("fmradio", "FM Radio")
         calibration = RadioSettingGroup("calibration", "Calibration")
-
+        help_user = RadioSettingGroup("help_user", "Help for user")
+        
         roinfo = RadioSettingGroup("roinfo", "Driver Information + Link to get latest driver F4HWN")
         top = RadioSettings()
         top.append(basic)
@@ -1636,7 +1647,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             top.append(fmradio)
         top.append(roinfo)
         top.append(calibration)
-
+#        top.append(help_user)
+        
         # helper function
         def append_label(radio_setting, label, descr=""):
             if not hasattr(append_label, 'idx'):
@@ -2029,6 +2041,12 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueList(SET_MET_LIST, SET_MET_LIST[tmpsetmet])
         SetMetSetting = RadioSetting("set_met", "Display the Smeter style (SetMet)", val)
         SetMetSetting.set_doc('SetMet: change the style of the Smeter display, from CLASSIC to TINY ')
+
+        # Set_gui f4hwn
+        tmpsetgui = list_def(_mem.set_gui, SET_MET_LIST, 0)
+        val = RadioSettingValueList(SET_MET_LIST, SET_MET_LIST[tmpsetgui])
+        SetGuiSetting = RadioSetting("set_gui", "Display text style (SetGui)", val)
+        SetGuiSetting.set_doc('SetGui: Change all the lcd display text style from CLASSIC to TINY ')
 
         tmpsq = min_max_def(_mem.squelch, 0, 9, 1)
         val = RadioSettingValueInteger(0, 9, tmpsq)
@@ -2510,6 +2528,107 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         radio_setting = RadioSetting(name, "DAC gain", val)
         radio_setting_group.append(radio_setting)
 
+
+
+        # ----------------- Help User
+
+        help_group = RadioSettingGroup("Explain_Display_HELP",
+                                                "Explain Display")
+        help_user.append(help_group)
+
+        append_label(help_group, "=" * 6 + " Display explanation "
+                         + "=" * 300, "=" * 300)
+        append_label(help_group,"(T) = Transmit" , "On the First Row, on the left side " )
+        append_label(help_group,"(PS) = POWER SAVE MODE" , "On the First Row, on the left side " )
+        append_label(help_group,"(S) = The mode Scan is activated" , "On the First Row, on the left side " )
+        append_label(help_group,"(><) = " , "On the First Row, on the left side " )
+        append_label(help_group,"(DWR) = " , "On the First Row, on the left side " )
+
+        append_label(help_group,"(Dark Arrow) = show what VFO is active" , "On the left side, on the active VFO " )
+
+        append_label(help_group,"(Mxxx) = Memory channel number M1-M200", "On the left side" )        
+        append_label(help_group,"(Fx) = frequency band number F1-F7 " , "On the left side " )
+
+        append_label(help_group,"(TX) = Transmit on this VFO" , "On the left of Each VFO " )
+        
+        append_label(help_group,"(R) = Something is Receive" , "under Each VFO " )
+        append_label(help_group,"(RX) = Something is Receive" , "under Each VFO " )
+
+        append_label(help_group,"(CT) = " , "under Each VFO " )
+               
+        append_label(help_group,"(H) = Power level to HIGH" , "under Each VFO " )
+        append_label(help_group,"(M) = Power level to MEDIUM" , "under Each VFO " )
+        append_label(help_group,"(L) = Power level to LOW" , "under Each VFO " )
+        
+        append_label(help_group,"(SQL #) = Squelch Level number" , "under Each VFO " )
+
+        
+        append_label(help_group, "=" * 6 + " KEY explanation "
+                         + "=" * 50, "=" * 6 + " When KEY (F #) is press before the key " + "=" * 50)
+
+
+        append_label(help_group,"(1 BAND) = long press, change the active band frequency (F1 to F7)  " , "Same a long press  " )
+        append_label(help_group,"(1 BAND) = short press, equal to number 1  "," " )
+
+        append_label(help_group,"(2 A/B) = long press, change the active VFO, A(top) / B(bottom) " , "Same a long press " )
+        append_label(help_group,"(2 A/B) = short press, equal to number 2  "," " )
+
+        append_label(help_group,"(3 VFO MR) = long press, change band frequency to Memory Channel " , "Same a long press  " )
+        append_label(help_group,"(3 VFO MR) = short press, equal to number 3  "," " )
+        
+        append_label(help_group,"(* SCAN) = long press, if VFO = Fx, Scan ban ", "make a scan list from the active channel" )
+        append_label(help_group,"(* SCAN) = long press, if VFO = Mxxx, switch scan list (1,2,*) ", "make a scan list from the active channel" )
+        append_label(help_group,"(* SCAN) = short press go to dtmf input mode (S) ", " " )
+
+        append_label(help_group,"(4 VFO MR) = long press, change band frequency to Memory Channel " , "Same a long press " )
+        append_label(help_group,"(4 VFO MR) = short press, equal to number 4  "," " )
+
+        append_label(help_group,"(5 NOAA) = long press, if VFO = Fx, ScnRnG will activated " , "go to fagci spectrum analyze " )
+        append_label(help_group,"(5 NOAA) = long press, if VFO = Mxxx,  Select scan list " , " ")
+        append_label(help_group,"(5 NOAA) = short press equal to number 5  "," " )
+        
+        append_label(help_group,"(6 H/M/L) = long press, change the Power Tx level(High/Medium/Low)of the active VFO " , "Same a long press " )
+        append_label(help_group,"(6 H/M/L) = short press equal to number 6  "," " )
+        
+        append_label(help_group,"(0 FM) = long press, to go in listen the radio fm band ", "Same a long press " )
+        append_label(help_group,"(0 FM) = short press, equal to number 0  "," " )
+
+        append_label(help_group,"(7 VOX) = long press, change Voice Activation (VX) " , "Same a long press " )
+        append_label(help_group,"(7 VOX) = short press equal to number 7  "," " )
+        
+        append_label(help_group,"(8 R) = long press, Reverse (R) " , "Same a long press ")
+        append_label(help_group,"(8 R) = short press equal to number 8  "," " )
+        
+        append_label(help_group,"(9 CALL) = long press, switches current channel to the 1-Call channel " , " ")
+        append_label(help_group,"(9 CALL) = short press equal to number 9  "," " )
+
+        append_label(help_group,"(F #) = long, press will Lock or unlock the keypad ", )
+        append_label(help_group,"(F #) = short, press activated the second funetion ", )
+
+
+
+
+ 
+        help_group = RadioSettingGroup("How_To_Upload_F4HWN_HELP",
+                                                "How To Upload F4HWN")
+        help_user.append(help_group)
+
+        append_label(help_group,"Special upload need to be done to upload F4HWN to the radio ", )
+        append_label(help_group,"Since the feature of F4HWN is locates in a different range of memory ", )
+        append_label(help_group,"You need to select the box Upload F4HWN, to upload ONLY and ONLY the ", )
+        append_label(help_group,"section of F4HWN to the radio. Go in menu Radio, Upload to Radio... ", )
+        append_label(help_group,"It will be realy fast to upload, then the radio will reboot. ", )
+        append_label(help_group,"After uploading, uncheck the box Upload F4HWN to be able to upload all other feature ", )
+        append_label(help_group,"of the radio. Go in menu Radio, Upload to Radio... now all the feature will be sent to the radio ", )
+        
+        help_group = RadioSettingGroup("Chirp_Language_HELP",
+                                                "How to Change Chirp Language")
+        help_user.append(help_group)
+        
+        append_label(help_group,"it's not possible to change the language directely in chirp ", )
+        append_label(help_group,"You need to change the windows parameter, since chirp read windows setting to set language ", )
+        append_label(help_group,"it's a bit hard to make description in text, so go see the file in github for now... ",CHIRP_DRIVER_VERSION_UPDATE )
+
         # -------- LAYOUT
         append_label(basic,
                      "=" * 6 + " F4HWN, Begin Setting, if this area need to be upload select the upload F4HWN" + "=" * 300, "=" * 300)
@@ -2522,6 +2641,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         basic.append(SetInvSetting)
         basic.append(SetLckSetting)
         basic.append(SetMetSetting)
+        basic.append(SetGuiSetting)
         append_label(basic,
                      "=" * 6 + " F4HWN, End Setting " + "=" * 300, "=" * 300)
 
