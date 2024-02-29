@@ -55,7 +55,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/18 (c) EGZUMER + F4HWN v1.9.0"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/29 (c) EGZUMER + F4HWN v2.0.0"
 FIRMWARE_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom-feat-F4HWN"
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver"
  
@@ -488,7 +488,7 @@ FLOCK_LIST = ["DEFAULT+ (137-174, 400-470 + Tx200, Tx350, Tx500)",
 SCANRESUME_LIST = ["Listen 5 seconds and resume (TIMEOUT)",
                    "Listen until signal disapears (CARRIER)",
                    "Stop scanning after receiving a signal (STOP)"]
-WELCOME_LIST = ["Full screen test (FULL)", "User message (MESSAGE)", "Battery voltage (VOLTAGE)", "NONE"]
+WELCOME_LIST = ["Message line 1,Voltage,Sound (ALL)", "Make a 2 short sound (SOUND)", "User message line 1 and line 2 (MESSAGE)", "Battery voltage (VOLTAGE)", "NONE"]
 VOICE_LIST = ["OFF", "Chinese", "English"]
 
 # ACTIVE CHANNEL
@@ -1684,31 +1684,36 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val1s = RadioSettingValueList(*get_action(_mem.key1_shortpress_action))
         rs = RadioSetting("key1_shortpress_action",
                           "Side key 1 short press (F1Shrt)", val1s)
-        rs.set_doc('F1Shrt: Select what action do you want to do when press this F1 key for a SHORT time, F1 key is locate on the side, the first key under the PTT')                          
+        rs.set_doc('F1Shrt: Select what action do you want to do when press this F1 key for a ' + \
+                   'SHORT time, F1 key is locate on the side, the first key under the PTT ')                          
         keya.append(rs)
 
         val1l = RadioSettingValueList(*get_action(_mem.key1_longpress_action))
         rs = RadioSetting("key1_longpress_action",
                           "Side key 1 long press (F1Long)", val1l)
-        rs.set_doc('F1Long: Select what action do you want to do when press this F1 key for a LONG time, F1 key is locate on the side, the first key under the PTT')                          
+        rs.set_doc('F1Long: Select what action do you want to do when press this F1 key for a ' + \
+                   'LONG time, F1 key is locate on the side, the first key under the PTT ')                          
         keya.append(rs)
 
         val2s = RadioSettingValueList(*get_action(_mem.key2_shortpress_action))
         rs = RadioSetting("key2_shortpress_action",
                           "Side key 2 short press (F2Shrt)", val2s)
-        rs.set_doc('F2Shrt: Select what action do you want to do when press this F2 key for a SHORT time, F2 key is locate on the side, the second key under the PTT')                          
+        rs.set_doc('F2Shrt: Select what action do you want to do when press this F2 key for a ' + \
+                   'SHORT time, F2 key is locate on the side, the second key under the PTT ')                          
         keya.append(rs)
 
         val2l = RadioSettingValueList(*get_action(_mem.key2_longpress_action))
         rs = RadioSetting("key2_longpress_action",
                           "Side key 2 long press (F2Long)", val2l)
-        rs.set_doc('F2Long: Select what action do you want to do when press this F2 key for a LONG time, F2 key is locate on the side, the second key under the PTT')
+        rs.set_doc('F2Long: Select what action do you want to do when press this F2 key for a ' + \
+                   'LONG time, F2 key is locate on the side, the second key under the PTT ')
         keya.append(rs)
 
         valm = RadioSettingValueList(*get_action(_mem.keyM_longpress_action))
         rs = RadioSetting("keyM_longpress_action",
                           "Menu key long press (M Long)", valm)
-        rs.set_doc('M Long: Select what action do you want to do when press this M key for a LONG time, M key is locate under the LCD, on the left side')
+        rs.set_doc('M Long: Select what action do you want to do when press this M key for a ' + \
+                   'LONG time, M key is locate under the LCD, on the left side ')
         keya.append(rs)
 
         # ----------------- DTMF settings
@@ -1720,7 +1725,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val.set_charset(DTMF_CODE_CHARS)
         sep_code_setting = RadioSetting("dtmf_separate_code",
                                         "Separate Code", val)
-        sep_code_setting.set_doc('Separate Code:')
+        sep_code_setting.set_doc('Separate Code: ')
 
         tmpval = str(_mem.dtmf.group_call_code)
         if tmpval not in DTMF_CODE_CHARS:
@@ -1737,25 +1742,26 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         first_code_per_setting = \
             RadioSetting("dtmf_first_code_persist_time",
                          "First code persist time (ms)", val)
-        first_code_per_setting.set_doc('First code persist time: how long to you want the first dtmf will be sent in milisecond')
+        first_code_per_setting.set_doc('First code persist time: How long to you want the first dtmf ' + \
+                                       'will be sent in milisecond ')
 
         tmpval = min_max_def(_mem.dtmf.hash_persist_time * 10, 30, 1000, 300)
         val = RadioSettingValueInteger(30, 1000, tmpval, 10)
         spec_per_setting = RadioSetting("dtmf_hash_persist_time",
                                         "#/* persist time (ms)", val)
-        spec_per_setting.set_doc('#/* persist time: how long this code # or / or * will be sent in milisecond')
+        spec_per_setting.set_doc('#/* persist time: How long this code # or / or * will be sent in milisecond ')
         
         tmpval = min_max_def(_mem.dtmf.code_persist_time * 10, 30, 1000, 300)
         val = RadioSettingValueInteger(30, 1000, tmpval, 10)
         code_per_setting = RadioSetting("dtmf_code_persist_time",
                                         "Code persist time (ms)", val)
-        code_per_setting.set_doc('Code persist time: how long the code will be sent in milisecond')
+        code_per_setting.set_doc('Code persist time: How long the code will be sent in milisecond ')
 
         tmpval = min_max_def(_mem.dtmf.code_interval_time * 10, 30, 1000, 300)
         val = RadioSettingValueInteger(30, 1000, tmpval, 10)
         code_int_setting = RadioSetting("dtmf_code_interval_time",
                                         "Code interval time (ms)", val)
-        code_int_setting.set_doc('Code interval time: how long to wait between each code sent in milisecond')
+        code_int_setting.set_doc('Code interval time: How long to wait between each code sent in milisecond ')
 
         tmpval = str(_mem.dtmf.local_code).upper().strip(
                 "\x00\xff\x20")
@@ -1769,7 +1775,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         ani_id_setting = \
             RadioSetting("dtmf_dtmf_local_code",
                          "Local code (3 chars 0-9 ABCD) (ANI ID)", val)
-        ani_id_setting.set_doc('ANI ID: DTMF communication radio ID')                         
+        ani_id_setting.set_doc('ANI ID: DTMF communication radio ID ')                         
 
         tmpval = str(_mem.dtmf.up_code).upper().strip(
                 "\x00\xff\x20")
@@ -1799,13 +1805,14 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         dw_code_setting = \
             RadioSetting("dtmf_dtmf_down_code",
                          "Down code (1-16 chars 0-9 ABCD*#) (DWCode)", val)
-        dw_code_setting.set_doc('DWCode:  DTMF code that is sent at the end of a transmission ')
+        dw_code_setting.set_doc('DWCode: DTMF code that is sent at the end of a transmission ')
 
         val = RadioSettingValueBoolean(_mem.dtmf.side_tone)
         dtmf_side_tone_setting = \
             RadioSetting("dtmf_side_tone",
                          "DTMF Sidetone on speaker when sent (D ST)", val)
-        dtmf_side_tone_setting.set_doc('D ST: DTMF side tone switch, lets you hear transmitted tones in the radio speaker ')
+        dtmf_side_tone_setting.set_doc('D ST: DTMF side tone switch, lets you hear transmitted  ' + \
+                                       'tones in the radio speaker ')
 
         tmpval = list_def(_mem.dtmf.decode_response,
                           DTMF_DECODE_RESPONSE_LIST, 0)
@@ -1832,7 +1839,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         d_live_setting = \
             RadioSetting("live_DTMF_decoder", "Displays DTMF codes"
                          " received in the middle of the screen (D Live)", val)
-        d_live_setting.set_doc('D Live: displays DTMF codes received by radio in the middle of the screen ')
+        d_live_setting.set_doc('D Live: Displays DTMF codes received by radio in the middle of the screen ')
         
         val = RadioSettingValueBoolean(_mem.dtmf.permit_remote_kill)
         perm_kill_setting = RadioSetting("dtmf_permit_remote_kill",
@@ -1906,7 +1913,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         val = RadioSettingValueBoolean(_mem.sl1PriorEnab)
         rs = RadioSetting("sl1PriorEnab", "List 1 priority channel scan", val)
-        rs.set_doc('List 1 priority: is this list as priority ')        
+        rs.set_doc('List 1 priority: Is this list as priority ')        
         scanl.append(rs)
 
         ch_list = ["None"]
@@ -1916,30 +1923,30 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         tmpch = list_def(_mem.sl1PriorCh1 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
         rs = RadioSetting("sl1PriorCh1", "List 1 priority channel 1", val)
-        rs.set_doc('List 1 priority channel 1: select the channel you want for priority ')        
+        rs.set_doc('List 1 priority channel 1: Select the channel you want for priority ')        
         scanl.append(rs)
 
         tmpch = list_def(_mem.sl1PriorCh2 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
         rs = RadioSetting("sl1PriorCh2", "List 1 priority channel 2", val)
-        rs.set_doc('List 1 priority channel 2: select the channel you want for priority ')
+        rs.set_doc('List 1 priority channel 2: Select the channel you want for priority ')
         scanl.append(rs)
 
         val = RadioSettingValueBoolean(_mem.sl2PriorEnab)
         rs = RadioSetting("sl2PriorEnab", "List 2 priority channel scan", val)
-        rs.set_doc('List 2 priority: is this list as priority ')
+        rs.set_doc('List 2 priority: Is this list as priority ')
         scanl.append(rs)
 
         tmpch = list_def(_mem.sl2PriorCh1 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
         rs = RadioSetting("sl2PriorCh1", "List 2 priority channel 1", val)
-        rs.set_doc('List 2 priority channel 1: select the channel you want for priority ')
+        rs.set_doc('List 2 priority channel 1: Select the channel you want for priority ')
         scanl.append(rs)
 
         tmpch = list_def(_mem.sl2PriorCh2 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
         rs = RadioSetting("sl2PriorCh2", "List 2 priority channel 2", val)
-        rs.set_doc('List 2 priority channel 2: select the channel you want for priority ')
+        rs.set_doc('List 2 priority channel 2: Select the channel you want for priority ')
         scanl.append(rs)
 
         # ----------------- Basic settings
@@ -1986,7 +1993,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                              'So it need to be upload to the radio separately, check this case to ' + \
                              'upload ONLY and ONLY all the section of F4HWN feature to the radio. ' + \
                              'It will be realy fast to upload, then the radio will reboot. ' + \
-                             'After uploading, uncheck the case to be able to upload all other feature')
+                             'After uploading, uncheck the case to be able to upload all other feature ')
         self.upload_f4hwn = val
                                      
         # Set_Low_Power f4hwn
@@ -2001,8 +2008,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         tmpsetptt = list_def(_mem.set_ptt, SET_PTT_LIST, 0)
         val = RadioSettingValueList(SET_PTT_LIST, SET_PTT_LIST[tmpsetptt])
         SetPttSetting = RadioSetting("set_ptt", "Ptt Mode, Set how react the ptt (SetPtt)", val)
-        SetPttSetting.set_doc('SetPtt: *CLASSIC: press = start transmission, release = stop transmission.  ' + \
-                              '*ONEPUSH: you no longer need to press the PTT continuously to transmit.     ' + \
+        SetPttSetting.set_doc('SetPtt: *CLASSIC: Press = start transmission, release = stop transmission.  ' + \
+                              '*ONEPUSH: You no longer need to press the PTT continuously to transmit.     ' + \
                               ' Simply press once to start transmission, and press a second time to stop.  ' + \
                               ' No more finger cramps :) ')
 
@@ -2010,37 +2017,38 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         tmpsettot = list_def(_mem.set_tot, SET_TOT_EOT_LIST, 0)
         val = RadioSettingValueList(SET_TOT_EOT_LIST, SET_TOT_EOT_LIST[tmpsettot])
         SetTotSetting = RadioSetting("set_tot", "Set TX timeout indicator (SetTot)", val)
-        SetTotSetting.set_doc('SetTot: to display the Set TX timeout indicator ')
+        SetTotSetting.set_doc('SetTot: To display the Set TX timeout indicator ')
 
         # Set_eot f4hwn
         tmpseteot = list_def(_mem.set_eot, SET_TOT_EOT_LIST, 0)
         val = RadioSettingValueList(SET_TOT_EOT_LIST, SET_TOT_EOT_LIST[tmpseteot])
         SetEotSetting = RadioSetting("set_eot", " Set End Of Transmission indicator (SetEot)", val)
-        SetEotSetting.set_doc('SetEot: to display the end of the Transmission ')
+        SetEotSetting.set_doc('SetEot: To display the end of the Transmission ')
 
         # Set_contrast f4hwn
         tmpcontrast = min_max_def(_mem.set_contrast, 0, 15, 11)
         val = RadioSettingValueInteger(0, 15, tmpcontrast)
         contrastSetting = RadioSetting("set_contrast", "Set Contrast Level (SetCtr)", val)
-        contrastSetting.set_doc('SetCtr: to set contrast (0 to 15), default: 10 ')
+        contrastSetting.set_doc('SetCtr: To set contrast (0 to 15), default: 10 ')
        
         # Set_inv f4hwn
         tmpsetinv = list_def(_mem.set_inv, SET_OFF_ON_LIST, 0)
         val = RadioSettingValueList(SET_OFF_ON_LIST, SET_OFF_ON_LIST[tmpsetinv])
         SetInvSetting = RadioSetting("set_inv", "Set inverse lcd (SetInv)", val)
-        SetInvSetting.set_doc('SetInv: the texte display is black on white or texte white on black, default: black on white')
+        SetInvSetting.set_doc('SetInv: The texte display is black on white or texte white on black, ' + \
+                              'default: black on white ')
 
         # Set_lck, uses
         tmpsetlck = list_def(_mem.set_lck, SET_LCK_LIST, 0)
         val = RadioSettingValueList(SET_LCK_LIST, SET_LCK_LIST[tmpsetlck])
         SetLckSetting = RadioSetting("set_lck", "Lock the PTT when keypad is lock (SetLck)", val)
-        SetLckSetting.set_doc('SetLck: when keypad is lock, do you want to lock the ptt with it or not ')
+        SetLckSetting.set_doc('SetLck: When keypad is lock, do you want to lock the ptt with it or not ')
         
         # Set_met f4hwn
         tmpsetmet = list_def(_mem.set_met, SET_MET_LIST, 0)
         val = RadioSettingValueList(SET_MET_LIST, SET_MET_LIST[tmpsetmet])
         SetMetSetting = RadioSetting("set_met", "Display the Smeter style (SetMet)", val)
-        SetMetSetting.set_doc('SetMet: change the style of the Smeter display, from CLASSIC to TINY ')
+        SetMetSetting.set_doc('SetMet: Change the style of the Smeter display, from CLASSIC to TINY ')
 
         # Set_gui f4hwn
         tmpsetgui = list_def(_mem.set_gui, SET_MET_LIST, 0)
@@ -2051,7 +2059,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         tmpsq = min_max_def(_mem.squelch, 0, 9, 1)
         val = RadioSettingValueInteger(0, 9, tmpsq)
         squelch_setting = RadioSetting("squelch", "Squelch (Sql)", val)
-        squelch_setting.set_doc('Sql: squelch sensitivity level 0 to 9, 0 = no restriction')
+        squelch_setting.set_doc('Sql: Squelch sensitivity level 0 to 9, 0 = no restriction ')
         
         ch_list = []
         for ch in range(1, 201):
@@ -2062,29 +2070,30 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         call_channel_setting = RadioSetting("call_channel",
                                             "One key call channel (1 Call)",
                                             val)
-        call_channel_setting.set_doc('1 Call: one key call channel, lets you quickly switch to the channel with 9 Call button ')
+        call_channel_setting.set_doc('1 Call: One key call channel, lets you quickly switch to the ' + \
+                                     'channel with 9 Call button ')
 
         val = RadioSettingValueBoolean(_mem.key_lock)
         keypad_lock_setting = RadioSetting("key_lock", "Keypad locked", val)
-        keypad_lock_setting.set_doc('Keypad locked: Activated the lock on the keypad now')
+        keypad_lock_setting.set_doc('Keypad locked: Activated the lock on the keypad now ')
         
         tmpval = list_def(_mem.auto_keypad_lock, AUTO_KEYPAD_LOCK_LIST, 1)
         val = RadioSettingValueList(AUTO_KEYPAD_LOCK_LIST, None, tmpval)
         auto_keypad_lock_setting = RadioSetting("auto_keypad_lock",
                          "Auto keypad lock after inactivity ~15sec (KeyLck)", val)
-        auto_keypad_lock_setting.set_doc('KeyLck: Keypad lock after inactivity ~15sec *OFF (no lock keypad), AUTO ')
+        auto_keypad_lock_setting.set_doc('KeyLck: Keypad lock after inactivity ~15sec *OFF: No lock keypad, AUTO ')
         
         tmptot = list_def(_mem.max_talk_time,  TALK_TIME_LIST, 1)
         val = RadioSettingValueList(TALK_TIME_LIST, None, tmptot)
         tx_t_out_setting = RadioSetting("tot",
                                         "Max talk, TX Time Out (TxTOut)", val)
-        tx_t_out_setting.set_doc('TxTOut: select the time limit max transmission ')                                        
+        tx_t_out_setting.set_doc('TxTOut: Select the time limit max transmission ')                                        
 
         tmpbatsave = list_def(_mem.battery_save, BATSAVE_LIST, 4)
         val = RadioSettingValueList(BATSAVE_LIST, None, tmpbatsave)
         bat_save_setting = RadioSetting("battery_save",
                                         "Battery save (BatSav)", val)
-        bat_save_setting.set_doc('BatSav: battery save option, a rate between active time and sleep time ')
+        bat_save_setting.set_doc('BatSav: Battery save option, a rate between active time and sleep time ')
         
         val = RadioSettingValueBoolean(_mem.noaa_autoscan)
         noaa_auto_scan_setting = RadioSetting("noaa_autoscan",
@@ -2106,14 +2115,18 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueList(CHANNELDISP_LIST, None, tmpchdispmode)
         ch_disp_setting = RadioSetting("channel_display_mode",
                                        "Channel display mode (ChDisp)", val)
-        ch_disp_setting.set_doc('ChDisp: what to display on screen. *The frequency, *The channel number, *The name, *Then name plus the frequency ')
+        ch_disp_setting.set_doc('ChDisp: What to display on screen. *The frequency, *The channel number, ' + \
+                                '*The name, *Then name plus the frequency ')
 
         tmpdispmode = list_def(_mem.power_on_dispmode, WELCOME_LIST, 0)
         val = RadioSettingValueList(WELCOME_LIST, None, tmpdispmode)
         p_on_msg_setting = RadioSetting("welcome_mode",
                                         "Power ON display message (POnMsg)",
                                         val)
-        p_on_msg_setting.set_doc('POnMsg: ON power upof the radio, what do you want to display. *Full screen (black). *Your Message. *Voltage of the battery. *Nothing')
+        p_on_msg_setting.set_doc('POnMsg: On power up of the radio, what do you want to display: ' + \
+                                 '*ALL: Your Message line 1 + Voltage + Sound, *Sound: beep beep 2 ' + \
+                                 'time, *Message: Your Message line 1 and line 2. *Voltage: Voltage ' + \
+                                 'of the battery, *Nothing ')
 
         logo1 = str(_mem.logo_line1).strip("\x20\x00\xff") + "\x00"
         logo1 = _getstring(logo1.encode('ascii', errors='ignore'), 0, 12)
@@ -2121,7 +2134,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         logo1_setting = RadioSetting("logo1",
                                      "Message line 1 ( MAX 12 characters ) ",
                                      val)
-        logo1_setting.set_doc('Message line 1: The first line you can put your message, their is a maximum of 12 characters')
+        logo1_setting.set_doc('Message line 1: The first line you can put your message, ' + \
+                              'their is a maximum of 12 characters ')
 
         logo2 = str(_mem.logo_line2).strip("\x20\x00\xff") + "\x00"
         logo2 = _getstring(logo2.encode('ascii', errors='ignore'), 0, 12)
@@ -2129,69 +2143,73 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         logo2_setting = RadioSetting("logo2",
                                      "Message line 2 ( MAX 12 characters )",
                                      val)
-        logo2_setting.set_doc('Message line 2: The second line you can put your message, their is a maximum of 12 characters')
+        logo2_setting.set_doc('Message line 2: The second line you can put your message, ' + \
+                              'their is a maximum of 12 characters ')
 
         tmpbattxt = list_def(_mem.battery_text, BAT_TXT_LIST, 2)
         val = RadioSettingValueList(BAT_TXT_LIST, None, tmpbattxt)
         bat_txt_setting = RadioSetting("battery_text",
                                        "Battery Level Display (BatTXT)", val)
-        bat_txt_setting.set_doc('BatTXT: Display additional battery value on the status bar in % or volts')
+        bat_txt_setting.set_doc('BatTXT: Display additional battery value on the status bar in % or volts ')
 
         tmpback = list_def(_mem.backlight_time, BACKLIGHT_LIST, 0)
         val = RadioSettingValueList(BACKLIGHT_LIST, None, tmpback)
         back_lt_setting = RadioSetting("backlight_time",
                                        "Backlight time (BackLt)", val)
-        back_lt_setting.set_doc('BackLt: backlight duration, how long the backlight will stay ON after a action end')
+        back_lt_setting.set_doc('BackLt: Backlight duration, how long the backlight will stay ON ' + \
+                                'after a action end ')
 
         tmpback = list_def(_mem.backlight_min, BACKLIGHT_LVL_LIST, 0)
         val = RadioSettingValueList(BACKLIGHT_LVL_LIST, None, tmpback)
         bl_min_setting = RadioSetting("backlight_min",
                                       "Backlight level min (BLMin)", val)
-        bl_min_setting.set_doc('BLMin: minimal backlight brightness, when the screen backlight turns OFF it will go dim to this value')
+        bl_min_setting.set_doc('BLMin: Minimal backlight brightness, when the screen backlight turns OFF ' + \
+                               'it will go dim to this value ')
 
         tmpback = list_def(_mem.backlight_max, BACKLIGHT_LVL_LIST, 10)
         val = RadioSettingValueList(BACKLIGHT_LVL_LIST, None, tmpback)
         bl_max_setting = RadioSetting("backlight_max",
                                       "Backlight level max (BLMax)", val)
-        bl_max_setting.set_doc('BLMax:  maximal backlight brightness, when the screen backlight turns ON it will turn bright to this value')
+        bl_max_setting.set_doc('BLMax: Maximal backlight brightness, when the screen backlight turns ON ' + \
+                               'it will turn bright to this value ')
         
         tmpback = list_def(_mem.backlight_on_TX_RX, BACKLIGHT_TX_RX_LIST, 0)
         val = RadioSettingValueList(BACKLIGHT_TX_RX_LIST, None, tmpback)
         blt_trx_setting = RadioSetting("backlight_on_TX_RX",
                                        "Backlight on TX/RX (BltTRX)", val)
-        blt_trx_setting.set_doc('BltTRX: backlight activation on TX or RX or both TX and RX or no backlight')
+        blt_trx_setting.set_doc('BltTRX: Backlight activation on TX or RX or both TX and RX or no backlight ')
         
         val = RadioSettingValueBoolean(_mem.button_beep)
         beep_setting = RadioSetting("button_beep",
                                     "Key press beep sound (Beep)", val)
-        beep_setting.set_doc('Beep: keypad press beep sound')
+        beep_setting.set_doc('Beep: Keypad press beep sound ')
 
         tmpalarmmode = list_def(_mem.roger_beep, ROGER_LIST, 0)
         val = RadioSettingValueList(ROGER_LIST, None, tmpalarmmode)
         roger_setting = RadioSetting("roger_beep",
                                      "End of transmission beep (Roger)", val)
-        roger_setting.set_doc('Roger: squelch tail eliminator, eliminates noise at the end of a transmission')
+        roger_setting.set_doc('Roger: Squelch tail eliminator, eliminates noise at the end of a transmission ')
 
         val = RadioSettingValueBoolean(_mem.ste)
         ste_setting = RadioSetting("ste", "Squelch tail elimination (STE)", val)
-        ste_setting.set_doc('STE: squelch tail eliminator, eliminates noise at the end of a transmission')
+        ste_setting.set_doc('STE: Squelch tail eliminator, eliminates noise at the end of a transmission ')
 
         tmprte = list_def(_mem.rp_ste, RTE_LIST, 0)
         val = RadioSettingValueList(RTE_LIST, None, tmprte)
         rp_ste_setting = \
             RadioSetting("rp_ste",
                          "Repeater squelch tail elimination (RP STE)", val)
-        rp_ste_setting.set_doc('RP STE: repeater squelch tail eliminator')
+        rp_ste_setting.set_doc('RP STE: Repeater squelch tail eliminator ')
 
         val = RadioSettingValueBoolean(_mem.AM_fix)
         am_fix_setting = RadioSetting("AM_fix",
                                       "AM reception fix (AM Fix)", val)
-        am_fix_setting.set_doc('AM Fix: activates autogain AM fix function')
+        am_fix_setting.set_doc('AM Fix: Activates autogain AM fix function ')
 
         tmpvox = min_max_def((_mem.vox_level + 1) * _mem.vox_switch, 0, 10, 0)
         val = RadioSettingValueList(VOX_LIST, None, tmpvox)
         vox_setting = RadioSetting("vox", "Voice-operated switch (VOX)", val)
-        vox_setting.set_doc('VOX: voice TX activation sensitivity level VOX Setting ')
+        vox_setting.set_doc('VOX: Voice TX activation sensitivity level VOX Setting ')
         
         tmprxmode = list_def((bool(_mem.crossband) << 1)
                              + bool(_mem.dual_watch),
@@ -2202,7 +2220,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                                 'listens both frequencies, if signal received on the secondary frequency, it locks to ' + \
                                 'it for a couple of seconds so you can respond to the call (DWR). *CROSS BAND: always ' + \
                                 'transmits on the primary and listens on the secondary frequency (XB). *MAIN TX DUAL RX:' + \
-                                'always transmits on the primary, listens to both (DW).')
+                                'always transmits on the primary, listens to both (DW). ')
 
         val = RadioSettingValueBoolean(_mem.freq_mode_allowed)
         freq_mode_allowed_setting = RadioSetting("freq_mode_allowed",
@@ -2213,8 +2231,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueList(SCANRESUME_LIST, None, tmpscanres)
         scn_rev_setting = RadioSetting("scan_resume_mode",
                                        "Scan resume mode (ScnRev)", val)
-        scn_rev_setting.set_doc('ScnRev: scan resume mode *CARRIER - resume scan after signal disappears. ' + \
-                                '*TIMEOUT - resume scan after 5 seconds pause. *STOP - after receiving a signal, stop the scan')
+        scn_rev_setting.set_doc('ScnRev: Scan resume mode *CARRIER - resume scan after signal disappears. ' + \
+                                '*TIMEOUT - resume scan after 5 seconds pause. *STOP - after receiving a ' + \
+                                'signal, stop the scan ')
         
         tmpvoice = list_def(_mem.voice, VOICE_LIST, 0)
         val = RadioSettingValueList(VOICE_LIST, None, tmpvoice)
@@ -2250,7 +2269,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueList(BATTYPE_LIST, BATTYPE_LIST[tmpbtype])
         bat_type_setting = RadioSetting("Battery_type",
                                         "Battery Type (BatTyp)", val)
-        bat_type_setting.set_doc('BatTyp: What type of battery the radio is using, this affect the level value of the battery in the display')
+        bat_type_setting.set_doc('BatTyp: What type of battery the radio is using, this affect ' + \
+                                 'the level value of the battery in the display ')
 
         # Power on password
 #        def validate_password(value):
@@ -2340,7 +2360,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(roinfo, "Firmware Version", firmware)
         val = RadioSettingValueString(0,75,FIRMWARE_DRIVER_VERSION_UPDATE)
         rs = RadioSetting("Update","Latest Firmware F4HWN" + ", copy link:(CTRL-C), paste:(CTRL-V) to your browser -> ", val)                      
-        rs.set_doc('Be sure you have the latest firmware available')
+        rs.set_doc('Be sure you have the latest firmware available ')
         roinfo.append(rs)
         
         append_label(roinfo,
@@ -2349,7 +2369,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(roinfo, "Driver Chirp Version", DRIVER_VERSION)
         val = RadioSettingValueString(0,75,CHIRP_DRIVER_VERSION_UPDATE)
         rs = RadioSetting("Update1","Latest Driver " + self.MODEL + ", copy link:(CTRL-C), paste:(CTRL-V) to your browser -> ", val)                      
-        rs.set_doc('Be sure you have the latest chirp driver available')
+        rs.set_doc('Be sure you have the latest chirp driver available ')
         roinfo.append(rs)
         
         # ----------------- Calibration
@@ -2371,7 +2391,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val.set_validate_callback(validate_upload_calibration)
         radio_setting = RadioSetting("upload_calibration",
                                      "Upload calibration", val)
-        radio_setting.set_doc('To Upload to the radio only the setting in the calibration section, you need to check the case, then upload to the radio')
+        radio_setting.set_doc('To Upload to the radio only the setting in the calibration section, ' + \
+                              'you need to check the case, then upload to the radio ')
         calibration.append(radio_setting)
 
         radio_setting_group = RadioSettingGroup("squelch_calibration",
