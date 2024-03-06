@@ -1,6 +1,10 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 2.2.0: Add the new item in the menu of the programable key. Temporarily backlight off. kind of turn off the backlight now.
+Add the help user menu, it's basic, it not yet complete...
+Add description text 
+
 In version 2.0.0: Add the new item in the menu of the power on message. Make a visual more standard on the fly of display with the mouse all over the setting...
 
 In the driver chirp for F4HWN version 1.8.2 and futur, their is a textbox with the mouse over option on almost everything. this is to help user to get more info about what is this option is for... :)
