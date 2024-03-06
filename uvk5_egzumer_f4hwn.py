@@ -32,7 +32,6 @@
 # 2024-02-18 : a bug fix has been remove, that seem not work under mac os.. under investigation..
 #              search for (bugfix calibration)
 
-
 import struct
 import logging
 import wx
@@ -55,7 +54,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/02/29 (c) EGZUMER + F4HWN v2.0.0"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/03/05 (c) EGZUMER + F4HWN v2.2.0"
 FIRMWARE_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom-feat-F4HWN"
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver"
  
@@ -546,7 +545,7 @@ KEYACTIONS_LIST = ["NONE",
                    "POWER",
                    "MONITOR",
                    "SCAN",
-                   "VOX",
+                   "Voice detection (VOX)",
                    "ALARM",
                    "FM RADIO",
                    "1750Hz TONE",
@@ -554,9 +553,9 @@ KEYACTIONS_LIST = ["NONE",
                    "Switch main VFO (SWITCH VFO)",
                    "Switch frequency/memory mode (VFO/MR)",
                    "Switch demodulation (SWITCH DEMODUL)",
-                   "BKL_MIN_N/U",
+                   "Put the backlight OFF temporarily (BL_MIN_TMP_OFF)",
                    "Change RxMode: *Main only,*Dual RX,*Cross Band,*TX Dual RX (SWITCH RX MODE)",
-                   "SWITCH PTT",                   
+                   "Toggle CLASSIC to ONE PUSH ptt (SWITCH PTT)",                   
                    "SWITCH WIDE NARROW"
                   ]
 
@@ -1117,6 +1116,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
             val = RadioSettingValueList(PTTID_LIST)
             rs = RadioSetting("pttid", "PTTID", val)
+            
+            rs.set_doc('PTTID: test joc.') 
             mem.extra.append(rs)
 
             val = RadioSettingValueBoolean(False)
@@ -1631,7 +1632,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         unlock = RadioSettingGroup("unlock", "Unlock Settings")
         fmradio = RadioSettingGroup("fmradio", "FM Radio")
         calibration = RadioSettingGroup("calibration", "Calibration")
-        help_user = RadioSettingGroup("help_user", "Help for user")
+        help_user = RadioSettingGroup("help_user", "Help For User")
         
         roinfo = RadioSettingGroup("roinfo", "Driver Information + Link to get latest driver F4HWN")
         top = RadioSettings()
@@ -1647,7 +1648,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             top.append(fmradio)
         top.append(roinfo)
         top.append(calibration)
-#        top.append(help_user)
+        top.append(help_user)
         
         # helper function
         def append_label(radio_setting, label, descr=""):
@@ -1666,6 +1667,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             has_alarm = self._memobj.BUILD_OPTIONS.ENABLE_ALARM
             has1750 = self._memobj.BUILD_OPTIONS.ENABLE_TX1750
             has_flashlight = self._memobj.BUILD_OPTIONS.ENABLE_FLASHLIGHT
+
+            has_backlight_off = self._memobj.BUILD_OPTIONS.ENABLE_BLMIN_TMP_OFF
+            
             lst = KEYACTIONS_LIST.copy()
             if not has_alarm:
                 lst.remove("ALARM")
@@ -1673,7 +1677,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                 lst.remove("1750Hz TONE")
             if not has_flashlight:
                 lst.remove("FLASHLIGHT")
-            lst.remove("BKL_MIN_N/U") # F4HWN remove this
+            if not has_backlight_off:
+                lst.remove("BL_MIN_TMP_OFF")
 
             action_num = int(action_num)
             if action_num >= len(KEYACTIONS_LIST) or \
@@ -2558,34 +2563,35 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         help_user.append(help_group)
 
         append_label(help_group, "=" * 6 + " Display explanation "
-                         + "=" * 300, "=" * 300)
+                          + "=" * 50, "=" * 6  + " Location on Display " + "=" * 50)
+                          
         append_label(help_group,"(T) = Transmit" , "On the First Row, on the left side " )
         append_label(help_group,"(PS) = POWER SAVE MODE" , "On the First Row, on the left side " )
         append_label(help_group,"(S) = The mode Scan is activated" , "On the First Row, on the left side " )
         append_label(help_group,"(><) = " , "On the First Row, on the left side " )
         append_label(help_group,"(DWR) = " , "On the First Row, on the left side " )
+        append_label(help_group,"(VX) =  Voice Activation enable ", "On the First Row, on the left side " )
 
         append_label(help_group,"(Dark Arrow) = show what VFO is active" , "On the left side, on the active VFO " )
 
-        append_label(help_group,"(Mxxx) = Memory channel number M1-M200", "On the left side" )        
-        append_label(help_group,"(Fx) = frequency band number F1-F7 " , "On the left side " )
-
-        append_label(help_group,"(TX) = Transmit on this VFO" , "On the left of Each VFO " )
+        append_label(help_group,"(Mxxx) = Memory channel number M1-M200", "On the left side of Each VFO " )        
+        append_label(help_group,"(Fx) = Frequency band number F1-F7 " , "On the left side of Each VFO " )
+        append_label(help_group,"(FM,USB,AM) = Type of TX and RX reception " , "On the left side of Each VFO " )
+        append_label(help_group,"(TX) = Transmit on this VFO" , "On the left side of Each VFO " )
         
-        append_label(help_group,"(R) = Something is Receive" , "under Each VFO " )
-        append_label(help_group,"(RX) = Something is Receive" , "under Each VFO " )
+        append_label(help_group,"(R) = Something is Receive" , "Under Each VFO " )
+        append_label(help_group,"(RX) = Something is Receive" , "Under Each VFO " )
 
-        append_label(help_group,"(CT) = " , "under Each VFO " )
+        append_label(help_group,"(CT) = " , "Under Each VFO " )
                
-        append_label(help_group,"(H) = Power level to HIGH" , "under Each VFO " )
-        append_label(help_group,"(M) = Power level to MEDIUM" , "under Each VFO " )
-        append_label(help_group,"(L) = Power level to LOW" , "under Each VFO " )
+        append_label(help_group,"(H) = Power level to HIGH" , "Under Each VFO " )
+        append_label(help_group,"(M) = Power level to MEDIUM" , "Under Each VFO " )
+        append_label(help_group,"(L) = Power level to LOW" , "Under Each VFO " )
         
-        append_label(help_group,"(SQL #) = Squelch Level number" , "under Each VFO " )
-
+        append_label(help_group,"(SQL #) = Squelch Level number" , "Under Each VFO " )
         
         append_label(help_group, "=" * 6 + " KEY explanation "
-                         + "=" * 50, "=" * 6 + " When KEY (F #) is press before the key " + "=" * 50)
+                         + "=" * 50, "=" * 6 + " When KEY second Function (F #) is press before the key " + "=" * 50)
 
 
         append_label(help_group,"(1 BAND) = long press, change the active band frequency (F1 to F7)  " , "Same a long press  " )
@@ -2597,14 +2603,14 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(help_group,"(3 VFO MR) = long press, change band frequency to Memory Channel " , "Same a long press  " )
         append_label(help_group,"(3 VFO MR) = short press, equal to number 3  "," " )
         
-        append_label(help_group,"(* SCAN) = long press, if VFO = Fx, Scan ban ", "make a scan list from the active channel" )
-        append_label(help_group,"(* SCAN) = long press, if VFO = Mxxx, switch scan list (1,2,*) ", "make a scan list from the active channel" )
+        append_label(help_group,"(* SCAN) = long press, if VFO = Fx, Scan ban ", "Make a scan list from the active channel" )
+        append_label(help_group,"(* SCAN) = long press, if VFO = Mxxx, switch scan list (1,2,*) ", "Make a scan list from the active channel" )
         append_label(help_group,"(* SCAN) = short press go to dtmf input mode (S) ", " " )
 
         append_label(help_group,"(4 VFO MR) = long press, change band frequency to Memory Channel " , "Same a long press " )
         append_label(help_group,"(4 VFO MR) = short press, equal to number 4  "," " )
 
-        append_label(help_group,"(5 NOAA) = long press, if VFO = Fx, ScnRnG will activated " , "go to fagci spectrum analyze " )
+        append_label(help_group,"(5 NOAA) = long press, if VFO = Fx, ScnRnG will activated " , "Go to fagci spectrum analyze " )
         append_label(help_group,"(5 NOAA) = long press, if VFO = Mxxx,  Select scan list " , " ")
         append_label(help_group,"(5 NOAA) = short press equal to number 5  "," " )
         
@@ -2643,12 +2649,14 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(help_group,"of the radio. Go in menu Radio, Upload to Radio... now all the feature will be sent to the radio ", )
         
         help_group = RadioSettingGroup("Chirp_Language_HELP",
-                                                "How to Change Chirp Language")
+                                                "How To Change Chirp Language")
         help_user.append(help_group)
         
-        append_label(help_group,"it's not possible to change the language directely in chirp ", )
+        append_label(help_group,"it's not possible to change the language directely in chirp but...", )
         append_label(help_group,"You need to change the windows parameter, since chirp read windows setting to set language ", )
-        append_label(help_group,"it's a bit hard to make description in text, so go see the file in github for now... ",CHIRP_DRIVER_VERSION_UPDATE )
+        append_label(help_group,"it's a bit hard to explain with description in text only, so go see the file ", )
+        append_label(help_group,"(how_to_do_for_module_in_chirp_release_1.doc) include in the release version ", )
+        append_label(help_group,"or go on the web site github to see the file ", CHIRP_DRIVER_VERSION_UPDATE )
 
         # -------- LAYOUT
         append_label(basic,
@@ -2855,3 +2863,4 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             _mem_attr.is_scanlist2 = bool(tmp_val & 2)
 
         return memory
+
