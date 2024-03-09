@@ -54,7 +54,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/03/05 (c) EGZUMER + F4HWN v2.2.0"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/03/09 (c) EGZUMER + F4HWN v2.2.1"
 FIRMWARE_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom-feat-F4HWN"
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver"
  
@@ -1116,8 +1116,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
             val = RadioSettingValueList(PTTID_LIST)
             rs = RadioSetting("pttid", "PTTID", val)
-            
-            rs.set_doc('PTTID: test joc.') 
             mem.extra.append(rs)
 
             val = RadioSettingValueBoolean(False)
@@ -1213,17 +1211,20 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         # BusyCL
         val = RadioSettingValueBoolean(_mem.busyChLockout)
         rs = RadioSetting("busyChLockout", "Busy Ch Lockout    (BusyCL)", val)
+        rs.set_doc('BusyCL: If the channel is Busy, do not allow TX.') 
         mem.extra.append(rs)
 
         # Frequency reverse
         val = RadioSettingValueBoolean(_mem.freq_reverse)
         rs = RadioSetting("frev", "Reverse Frequencies (R)", val)
+        rs.set_doc('R: Is this need to be reverse ?') 
         mem.extra.append(rs)
 
         # PTTID
         pttid = list_def(_mem.dtmf_pttid, PTTID_LIST, 0)
         val = RadioSettingValueList(PTTID_LIST, None, pttid)
         rs = RadioSetting("pttid", "PTT ID (PTT ID)", val)
+        rs.set_doc('PTT ID: How do you want the ID sent or sound.') 
         mem.extra.append(rs)
 
         # DTMF DECODE
@@ -1236,15 +1237,18 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         enc = list_def(_mem.scrambler, SCRAMBLER_LIST, 0)
         val = RadioSettingValueList(SCRAMBLER_LIST, None, enc)
         rs = RadioSetting("scrambler", "Scrambler (Scramb)", val)
+        rs.set_doc('Scramb: How do you want scrambler on this frequency.') 
         mem.extra.append(rs)
 
         # Compander
         val = RadioSettingValueList(COMPANDER_LIST, None, tmp_comp)
         rs = RadioSetting("compander", "Compander (Compnd)", val)
+        rs.set_doc('Compnd: How do you want Compander on this frequency.') 
         mem.extra.append(rs)
 
         val = RadioSettingValueList(SCANLIST_LIST, None, tmpscn)
         rs = RadioSetting("scanlists", "Scanlists (SList)", val)
+        rs.set_doc('SList: Is this frequency is part of a scan list.') 
         mem.extra.append(rs)
 
         return mem
@@ -2863,4 +2867,3 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             _mem_attr.is_scanlist2 = bool(tmp_val & 2)
 
         return memory
-
