@@ -1,6 +1,8 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 2.2.1: Add the fly over in extra field in the memories tab. I was request chirp team to add it and they add it on the the last release on the basic setting has it's not in the driver. 
+
 In version 2.2.0: Add the new item in the menu of the programable key. Temporarily backlight off. kind of turn off the backlight now.
 Add the help user menu, it's basic, it not yet complete...
 Add description text 
