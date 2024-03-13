@@ -1682,7 +1682,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             if not has_flashlight:
                 lst.remove("FLASHLIGHT")
             if not has_backlight_off:
-                lst.remove("BL_MIN_TMP_OFF")
+                lst.remove("Put the backlight OFF temporarily (BL_MIN_TMP_OFF)")
 
             action_num = int(action_num)
             if action_num >= len(KEYACTIONS_LIST) or \
