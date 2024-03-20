@@ -2611,7 +2611,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(help_group,"(* SCAN) = long press, if VFO = Mxxx, switch scan list (1,2,*) ", "Make a scan list from the active channel" )
         append_label(help_group,"(* SCAN) = short press go to dtmf input mode (S) ", " " )
 
-        append_label(help_group,"(4 VFO MR) = long press, change band frequency to Memory Channel " , "Same a long press " )
+        append_label(help_group,"(4 VFO MR) = long press,  launches the CTC frequency scan " , "Same a long press " )
         append_label(help_group,"(4 VFO MR) = short press, equal to number 4  "," " )
 
         append_label(help_group,"(5 NOAA) = long press, if VFO = Fx, ScnRnG will activated " , "Go to fagci spectrum analyze " )
