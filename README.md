@@ -1,6 +1,10 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 2.4.0: cosmetic change, text update. 
+In the release: A version of the file DOC is copy in a PDF version to be more universal for user reading, 
+A other french file has been add to help user to understand their Radio. ( menu armel f4hwn.pdf done by 14UVR010) this is a copy of his file. To get the last update, go on the FB Group UV-K5 france. He allow me to put the file in this release.  
+
 In version 2.3.0: French file of the driver and documentation been had, a release has been done to include all in the same package. 
 
 In version 2.2.1: Add the fly over in extra field in the memories tab. I was request chirp team to add it and they add it on the the last release on the basic setting has it's not in the driver. 
