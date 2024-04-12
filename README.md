@@ -1,6 +1,12 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 2.5.0: FLock option PMR446 add. 
+change backlight time range, now it's from 5 sec to 5 minutes
+change tx timeout range , now it's from 30 sec to 15 minutes
+the french driver and the english driver are updated
+the file help from 14UVR010 is not update for version 2.5, but the link for the drop box it's now include int the file for update
+
 In version 2.4.0: cosmetic change, text update. 
 In the release: A version of the file DOC is copy in a PDF version to be more universal for user reading, 
 A other french file has been add to help user to understand their Radio. ( menu armel f4hwn.pdf done by 14UVR010) this is a copy of his file. To get the last update, go on the FB Group UV-K5 france. He allow me to put the file in this release.  
