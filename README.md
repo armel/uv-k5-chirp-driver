@@ -1,6 +1,10 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 2.6.0: This is just cosmetic change to follow the radio modification ( version 2.5 and 2.6 are the same functionality )
+Rename BackLt to BLTime
+Rename BltTRX to BLTxRx 
+
 In version 2.5.0: FLock option PMR446 add. 
 change backlight time range, now it's from 5 sec to 5 minutes
 change tx timeout range , now it's from 30 sec to 15 minutes
