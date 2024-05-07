@@ -1,6 +1,8 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+Armel release version 2.7, but no change has been involve to chirp driver with in his modification(bug fix, feature, etc) , so chirp driver not change. The only thing i add, it's the new file pdf from Alain that describle the update in the version 2,7. so i just add this file. so use version 2.6 chirp driver
+
 In version 2.6.0: This is just cosmetic change to follow the radio modification ( version 2.5 and 2.6 are the same functionality )
 Rename BackLt to BLTime
 Rename BltTRX to BLTxRx 
