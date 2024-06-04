@@ -1717,37 +1717,37 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         val1s = RadioSettingValueList(*get_action(_mem.key1_shortpress_action))
         rs = RadioSetting("key1_shortpress_action",
-                          "Side key 1 short press (F1Shrt)", val1s)
+                          "Side Key 1 Short Press [F1Shrt]", val1s)
         rs.set_doc('F1Shrt: Select the action to do when pressing F1 key for a ' + \
                    'SHORT time, F1 key is located on the left side, first key under PTT')
         keya.append(rs)
 
         val1l = RadioSettingValueList(*get_action(_mem.key1_longpress_action))
         rs = RadioSetting("key1_longpress_action",
-                          "Side key 1 long press (F1Long)", val1l)
+                          "Side Key 1 Long Press [F1Long]", val1l)
         rs.set_doc('F1Long: Select the action to do when pressing F1 key for a ' + \
-                   'LONG time, F1 key is located on the left side, first key under PTT ')
+                   'LONG time, F1 key is located on the left side, first key under PTT')
         keya.append(rs)
 
         val2s = RadioSettingValueList(*get_action(_mem.key2_shortpress_action))
         rs = RadioSetting("key2_shortpress_action",
-                          "Side key 2 short press (F2Shrt)", val2s)
+                          "Side Key 2 Short Press [F2Shrt]", val2s)
         rs.set_doc('F2Shrt: Select the action to do when pressing F2 key for a ' + \
-                   'SHORT time, F2 key is located on the left side, second key under PTT ')
+                   'SHORT time, F2 key is located on the left side, second key under PTT')
         keya.append(rs)
 
         val2l = RadioSettingValueList(*get_action(_mem.key2_longpress_action))
         rs = RadioSetting("key2_longpress_action",
-                          "Side key 2 long press (F2Long)", val2l)
+                          "Side Key 2 Long Press [F2Long]", val2l)
         rs.set_doc('F2Long: Select the action to do when pressing F2 key for a ' + \
-                   'LONG time, F2 key is located on the left side, second key under PTT ')
+                   'LONG time, F2 key is located on the left side, second key under PTT')
         keya.append(rs)
 
         valm = RadioSettingValueList(*get_action(_mem.keyM_longpress_action))
         rs = RadioSetting("keyM_longpress_action",
-                          "Menu key long press (M Long)", valm)
+                          "Menu Key Long Press [M Long]", valm)
         rs.set_doc('M Long: Select the action to do when pressing M key for a ' + \
-                   'LONG time, M key is located below the screen on the left.')
+                   'LONG time, M key is located below the screen on the left')
         keya.append(rs)
 
         # ----------------- DTMF settings
