@@ -1775,27 +1775,27 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueInteger(30, 1000, tmpval, 10)
         first_code_per_setting = \
             RadioSetting("dtmf_first_code_persist_time",
-                         "First code persist time (ms)", val)
+                         "First Code Persist Time (ms)", val)
         first_code_per_setting.set_doc('First code persist time: How long to you want the first DTMF ' + \
-                                       'will be sent in milisecond')
+                                       'will be sent (in milliseconds)')
 
         tmpval = min_max_def(_mem.dtmf.hash_persist_time * 10, 30, 1000, 300)
         val = RadioSettingValueInteger(30, 1000, tmpval, 10)
         spec_per_setting = RadioSetting("dtmf_hash_persist_time",
-                                        "#/* persist time (ms)", val)
-        spec_per_setting.set_doc('#/* persist time: How long this code # or / or * will be sent in milisecond')
+                                        "Persist Time (ms)", val)
+        spec_per_setting.set_doc('#/* persist time: How long this code # or / or * will be sent (in milliseconds)')
         
         tmpval = min_max_def(_mem.dtmf.code_persist_time * 10, 30, 1000, 300)
         val = RadioSettingValueInteger(30, 1000, tmpval, 10)
         code_per_setting = RadioSetting("dtmf_code_persist_time",
-                                        "Code persist time (ms)", val)
-        code_per_setting.set_doc('Code persist time: How long the code will be sent in milisecond')
+                                        "Code Persist Time (ms)", val)
+        code_per_setting.set_doc('Code persist time: How long the code will be sent (in milliseconds)')
 
         tmpval = min_max_def(_mem.dtmf.code_interval_time * 10, 30, 1000, 300)
         val = RadioSettingValueInteger(30, 1000, tmpval, 10)
         code_int_setting = RadioSetting("dtmf_code_interval_time",
-                                        "Code interval time (ms)", val)
-        code_int_setting.set_doc('Code interval time: How long to wait between each code sent in milisecond ')
+                                        "Code Interval Time (ms)", val)
+        code_int_setting.set_doc('Code interval time: How long to wait between each code sent (in milliseconds)')
 
         tmpval = str(_mem.dtmf.local_code).upper().strip(
                 "\x00\xff\x20")
@@ -1808,8 +1808,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val.set_charset(DTMF_CHARS_ID)
         ani_id_setting = \
             RadioSetting("dtmf_dtmf_local_code",
-                         "Local code (3 chars 0-9 ABCD) (ANI ID)", val)
-        ani_id_setting.set_doc('ANI ID: DTMF communication radio ID ')                         
+                         "Local Code (3 chars 0-9 ABCD) [ANI ID]", val)
+        ani_id_setting.set_doc('ANI ID: DTMF communication radio ID')
 
         tmpval = str(_mem.dtmf.up_code).upper().strip(
                 "\x00\xff\x20")
@@ -1823,8 +1823,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val.set_charset(DTMF_CHARS_UPDOWN)
         up_code_setting = \
             RadioSetting("dtmf_dtmf_up_code",
-                         "Up code (1-16 chars 0-9 ABCD*#) (UPCode)", val)
-        up_code_setting.set_doc('UPCode: DTMF code that is sent at the beginning of transmission ')
+                         "Up Code (1-16 chars 0-9 ABCD*#) [UPCode]", val)
+        up_code_setting.set_doc('UPCode: DTMF code sent at the beginning of transmission')
 
         tmpval = str(_mem.dtmf.down_code).upper().strip(
                 "\x00\xff\x20")
@@ -1838,46 +1838,46 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val.set_charset(DTMF_CHARS_UPDOWN)
         dw_code_setting = \
             RadioSetting("dtmf_dtmf_down_code",
-                         "Down code (1-16 chars 0-9 ABCD*#) (DWCode)", val)
-        dw_code_setting.set_doc('DWCode: DTMF code that is sent at the end of a transmission ')
+                         "Down Code (1-16 chars 0-9 ABCD*#) [DWCode]", val)
+        dw_code_setting.set_doc('DWCode: DTMF code sent at the end of a transmission')
 
         val = RadioSettingValueBoolean(_mem.dtmf.side_tone)
         dtmf_side_tone_setting = \
             RadioSetting("dtmf_side_tone",
-                         "DTMF Sidetone on speaker when sent (D ST)", val)
-        dtmf_side_tone_setting.set_doc('D ST: DTMF side tone switch, lets you hear transmitted  ' + \
-                                       'tones in the radio speaker ')
+                         "DTMF Sidetone On Speaker When Sent [D ST]", val)
+        dtmf_side_tone_setting.set_doc('D ST: DTMF side tone switch, lets you hear transmitted ' + \
+                                       'tones in the radio speaker')
 
         tmpval = list_def(_mem.dtmf.decode_response,
                           DTMF_DECODE_RESPONSE_LIST, 0)
         val = RadioSettingValueList(DTMF_DECODE_RESPONSE_LIST, None, tmpval)
         dtmf_resp_setting = RadioSetting("dtmf_decode_response",
-                                         "Decode Response (D Resp)", val)
-        dtmf_resp_setting.set_doc('D Resp: DTMF decoding response ')
+                                         "Decode Response [D Resp]", val)
+        dtmf_resp_setting.set_doc('D Resp: DTMF decoding response')
 
         tmpval = min_max_def(_mem.dtmf.auto_reset_time, 5, 60, 10)
         val = RadioSettingValueInteger(5, 60, tmpval)
         d_hold_setting = RadioSetting("dtmf_auto_reset_time",
-                                      "Auto reset time (s) (D Hold)", val)
-        d_hold_setting.set_doc('D Hold: DTMF auto reset time ')
+                                      "Auto Reset Time (s) [D Hold]", val)
+        d_hold_setting.set_doc('D Hold: DTMF auto reset time')
 
         # D Prel
         tmpval = min_max_def(_mem.dtmf.preload_time * 10, 30, 990, 300)
         val = RadioSettingValueInteger(30, 990, tmpval, 10)
         d_prel_setting = RadioSetting("dtmf_preload_time",
-                                      "Pre-load time (ms) (D Prel)", val)
-        d_prel_setting.set_doc('D Prel: DTMF pre-load time ')
+                                      "Pre-Load Time (ms) [D Prel]", val)
+        d_prel_setting.set_doc('D Prel: DTMF pre-load time')
         
         # D LIVE
         val = RadioSettingValueBoolean(_mem.live_DTMF_decoder)
         d_live_setting = \
             RadioSetting("live_DTMF_decoder", "Displays DTMF codes"
-                         " received in the middle of the screen (D Live)", val)
-        d_live_setting.set_doc('D Live: Displays DTMF codes received by radio in the middle of the screen ')
+                         " received in the middle of the screen [D Live]", val)
+        d_live_setting.set_doc('D Live: Displays DTMF codes received by radio in the middle of the screen')
         
         val = RadioSettingValueBoolean(_mem.dtmf.permit_remote_kill)
         perm_kill_setting = RadioSetting("dtmf_permit_remote_kill",
-                                         "Permit remote kill", val)
+                                         "Permit Remote Kill", val)
 
         tmpval = str(_mem.dtmf.kill_code).upper().strip(
                 "\x00\xff\x20")
@@ -1892,7 +1892,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueString(5, 5, tmpval)
         val.set_charset(DTMF_CHARS_KILL)
         kill_code_setting = RadioSetting("dtmf_kill_code",
-                                         "Kill code (5 chars 0-9 ABCD)", val)
+                                         "Kill Code (5 chars 0-9 ABCD)", val)
 
         tmpval = str(_mem.dtmf.revive_code).upper().strip(
                 "\x00\xff\x20")
@@ -1907,14 +1907,14 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueString(5, 5, tmpval)
         val.set_charset(DTMF_CHARS_KILL)
         rev_code_setting = RadioSetting("dtmf_revive_code",
-                                        "Revive code (5 chars 0-9 ABCD)", val)
+                                        "Revive Code (5 chars 0-9 ABCD)", val)
 
         val = RadioSettingValueBoolean(_mem.int_KILLED)
-        killed_setting = RadioSetting("int_KILLED", "DTMF kill lock", val)
+        killed_setting = RadioSetting("int_KILLED", "DTMF Kill Lock", val)
 
         # ----------------- DTMF Contacts
 
-        append_label(dtmfc, "DTMF Contacts  (D List)",
+        append_label(dtmfc, "DTMF Contacts  [D List]",
                      "All DTMF Contacts are 3 codes "
                      "(valid: 0-9 * # ABCD), "
                      "or an empty string")
@@ -1941,16 +1941,16 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         tmpscanl = list_def(_mem.slDef, SCANLIST_SELECT_LIST, 0)
         val = RadioSettingValueList(SCANLIST_SELECT_LIST, None, tmpscanl)
-        rs = RadioSetting("slDef", "Default scan lists (SList)", val)
+        rs = RadioSetting("slDef", "Default Scan Lists [SList]", val)
         rs.set_doc('SList: Selects which lists are used by the memory scan\n' + \
-                    '* ALL: All lists\n' + \
-                    '* LIST1: List 1 only\n' + \
-                    '* LIST2: List 2 only')
+                    '* ALL : All lists\n' + \
+                    '* LIST1 : List 1 only\n' + \
+                    '* LIST2 : List 2 only')
         scanl.append(rs)
 
         val = RadioSettingValueBoolean(_mem.sl1PriorEnab)
-        rs = RadioSetting("sl1PriorEnab", "List 1 priority channel scan", val)
-        rs.set_doc('List 1 priority: Is this list has priority ')
+        rs = RadioSetting("sl1PriorEnab", "List 1 Priority Channel Scan", val)
+        rs.set_doc('List 1 priority: Is this list has priority')
         scanl.append(rs)
 
         ch_list = ["None"]
@@ -1959,31 +1959,31 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         tmpch = list_def(_mem.sl1PriorCh1 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
-        rs = RadioSetting("sl1PriorCh1", "List 1 priority channel 1", val)
-        rs.set_doc('List 1 priority channel 1: Select the channel you want for priority ')        
+        rs = RadioSetting("sl1PriorCh1", "List 1 Priority Channel 1", val)
+        rs.set_doc('List 1 priority channel 1: Select the channel you want for priority')
         scanl.append(rs)
 
         tmpch = list_def(_mem.sl1PriorCh2 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
-        rs = RadioSetting("sl1PriorCh2", "List 1 priority channel 2", val)
-        rs.set_doc('List 1 priority channel 2: Select the channel you want for priority ')
+        rs = RadioSetting("sl1PriorCh2", "List 1 Priority Channel 2", val)
+        rs.set_doc('List 1 priority channel 2: Select the channel you want for priority')
         scanl.append(rs)
 
         val = RadioSettingValueBoolean(_mem.sl2PriorEnab)
-        rs = RadioSetting("sl2PriorEnab", "List 2 priority channel scan", val)
-        rs.set_doc('List 2 priority: Is this list as priority ')
+        rs = RadioSetting("sl2PriorEnab", "List 2 Priority Channel Scan", val)
+        rs.set_doc('List 2 priority: Is this list as priority')
         scanl.append(rs)
 
         tmpch = list_def(_mem.sl2PriorCh1 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
-        rs = RadioSetting("sl2PriorCh1", "List 2 priority channel 1", val)
-        rs.set_doc('List 2 priority channel 1: Select the channel you want for priority ')
+        rs = RadioSetting("sl2PriorCh1", "List 2 Priority Channel 1", val)
+        rs.set_doc('List 2 priority channel 1: Select the channel you want for priority')
         scanl.append(rs)
 
         tmpch = list_def(_mem.sl2PriorCh2 + 1, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpch)
-        rs = RadioSetting("sl2PriorCh2", "List 2 priority channel 2", val)
-        rs.set_doc('List 2 priority channel 2: Select the channel you want for priority ')
+        rs = RadioSetting("sl2PriorCh2", "List 2 Priority Channel 2", val)
+        rs.set_doc('List 2 priority channel 2: Select the channel you want for priority')
         scanl.append(rs)
 
         # ----------------- Basic settings
@@ -2000,26 +2000,26 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         tmpfreq0 = list_def(_mem.ScreenChannel_A, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpfreq0)
         freq0_setting = RadioSetting("VFO_A_chn",
-                                     "VFO A current channel/band", val)
-        freq0_setting.set_doc('VFO A current channel/band: To select what is it displayed on the VFO A\n' + \
+                                     "VFO A Current Channel/Band", val)
+        freq0_setting.set_doc('VFO A current channel/band: To select what is displayed on the VFO A\n' + \
                               '* CHANNEL number M1-M200\n' + \
                               '* BAND F1-F7\n' + \
-                              'look at the memory tab to view what is program their ')
+                              'look at the correspondence between memory and frequency in the memory tab')
 
         tmpfreq1 = list_def(_mem.ScreenChannel_B, ch_list, 0)
         val = RadioSettingValueList(ch_list, None, tmpfreq1)
         freq1_setting = RadioSetting("VFO_B_chn",
-                                      "VFO B current channel/band", val)
+                                      "VFO B Current Channel/Band", val)
         freq1_setting.set_doc('VFO B current channel/band: To select what is in the VFO B\n' + \
                               '* CHANNEL number M1-M200\n' + \
                               '* BAND F1-F7\n' + \
-                              'look in memory tab to view to see which memories are already programmed')
+                              'look at the correspondence between memory and frequency in the memory tab')
 
         tmptxvfo = list_def(_mem.TX_VFO, TX_VFO_LIST, 0)
         val = RadioSettingValueList(TX_VFO_LIST, None, tmptxvfo)
         tx_vfo_setting = RadioSetting("TX_VFO", "Main VFO", val)
         tx_vfo_setting.set_doc('Main VFO: To select which VFO is active, ' + \
-                               '( A is on TOP, B is on the BOTTOM ) ')
+                               '( A at the top, B at the bottom ) ')
         val = RadioSettingValueBoolean(False)
 
         def validate_upload_f4hwn(value):
