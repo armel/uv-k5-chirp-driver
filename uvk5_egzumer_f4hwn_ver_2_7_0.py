@@ -503,7 +503,7 @@ FLOCK_LIST = ["DEFAULT+ (137-174, 400-470 + Tx200, Tx350, Tx500)",
               "PMR 446",
               "DISABLE ALL",
               "UNLOCK ALL"]
-              
+
 SCANRESUME_LIST = ["Listen for 5 seconds and resume (TIMEOUT)",
                    "Listen until the signal disappears (CARRIER)",
                    "Stop scan when a signal is received (STOP)"]
@@ -2128,21 +2128,22 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         
         tmpval = list_def(_mem.auto_keypad_lock, AUTO_KEYPAD_LOCK_LIST, 1)
         val = RadioSettingValueList(AUTO_KEYPAD_LOCK_LIST, None, tmpval)
-        auto_keypad_lock_setting = RadioSetting("auto_keypad_lock", "Auto Lock Keypad After Inactivity (˜15s) (KeyLck)", val)
+        auto_keypad_lock_setting = RadioSetting("auto_keypad_lock", "Auto Lock Keypad After Inactivity 15s (KeyLck)", val)
         auto_keypad_lock_setting.set_doc('KeyLck: Keypad lock\n' + \
-                                         '* AUTO : After ˜15s of inactivity\n' + \
+                                         '* AUTO : After 15s of inactivity\n' + \
                                          '* OFF : No keypad lock')
-        
+                                         
         tmptot = list_def(_mem.max_talk_time,  TALK_TIME_LIST, 1)
         val = RadioSettingValueList(TALK_TIME_LIST, None, tmptot)
         tx_t_out_setting = RadioSetting("tot", "Max TX Timeout (TxTOut)", val)
         tx_t_out_setting.set_doc('TxTOut: Select the TX time limit\n' + \
-                                 'See option (SetTot) of F4HWN\'s firmware')
+                                 'See option (SetTot) of F4HWN')
+
         tmpbatsave = list_def(_mem.battery_save, BATSAVE_LIST, 4)
         val = RadioSettingValueList(BATSAVE_LIST, None, tmpbatsave)
         bat_save_setting = RadioSetting("battery_save", "Battery Saver (BatSav)", val)
         bat_save_setting.set_doc('BatSav: Battery saver option, ratio between active time and sleep time')
-        
+               
         val = RadioSettingValueBoolean(_mem.noaa_autoscan)
         noaa_auto_scan_setting = RadioSetting("noaa_autoscan", "NOAA Autoscan (NOAA-S)", val)
         noaa_auto_scan_setting.set_doc('NOAA-S: ')
@@ -2158,7 +2159,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         tmpchdispmode = list_def(_mem.channel_display_mode,
                                  CHANNELDISP_LIST, 0)
         val = RadioSettingValueList(CHANNELDISP_LIST, None, tmpchdispmode)
-        ch_disp_setting = RadioSetting("channel_display_mode", "Channel Display Mode (ChDisp)", val)
+        ch_disp_setting = RadioSetting("channel_display_mode",
+                                       "Channel Display Mode (ChDisp)", val)
         ch_disp_setting.set_doc('ChDisp: What to display on screen:\n' + \
                                 '* NAME\n' + \
                                 '* CHANNEL NUMBER\n' + \
@@ -2182,8 +2184,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         logo1_setting = RadioSetting("logo1", "Message Line 1 (12 characters max)", val)
         logo1_setting.set_doc('Message line 1: The first message line,\n' + \
                               'with a maximum of 12 characters\n' + \
-
-
                               'See option (POnMsg) to display it')
                                
         logo2 = str(_mem.logo_line2).strip("\x20\x00\xff") + "\x00"
@@ -2252,12 +2252,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         rp_ste_setting = RadioSetting("rp_ste", "Repeater Squelch Tail Elimination (RP STE)", val)
         rp_ste_setting.set_doc('RP STE: Repeater squelch tail eliminator')
 
-
-
         val = RadioSettingValueBoolean(_mem.AM_fix)
         am_fix_setting = RadioSetting("AM_fix", "AM Reception Fix (AM Fix)", val)
         am_fix_setting.set_doc('AM Fix: Activates autogain in AM reception')
-
 
         tmpvox = min_max_def((_mem.vox_level + 1) * _mem.vox_switch, 0, 10, 0)
         val = RadioSettingValueList(VOX_LIST, None, tmpvox)
@@ -2279,7 +2276,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueBoolean(_mem.freq_mode_allowed)
         freq_mode_allowed_setting = RadioSetting("freq_mode_allowed", "Frequency Mode Allowed", val)
         freq_mode_allowed_setting.set_doc('Frequency mode allowed')
-
 
         tmpscanres = list_def(_mem.scan_resume_mode, SCANRESUME_LIST, 0)
         val = RadioSettingValueList(SCANRESUME_LIST, None, tmpscanres)
@@ -2317,7 +2313,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         s0_level_setting = RadioSetting("s0_level", "S-Meter S0 Level (dBm)", val)
         s0_level_setting.set_doc('S-meter S0 level (dBm): To set the level calibration for S0')
 
-
         val = RadioSettingValueInteger(-160, -50, tmp_s9)
         s9_level_setting = RadioSetting("s9_level", "S-Meter S9 Level (dBm)", val)
         s9_level_setting.set_doc('S-meter S9 level (dBm): To set the level calibration for S9')
@@ -2348,8 +2343,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 #        pswd_setting = RadioSetting("password", "Power on password", val)
 
         # ----------------- FM radio
-        append_label(fmradio, "Channel Memory Radio (MR)", "Frequency (MHz)")
 
+        append_label(fmradio, "Channel Memory Radio (MR)", "Frequency (MHz)")
 
         for i in range(1, 21):
             fmfreq = _mem.fmfreq[i-1]/10.0
@@ -2438,10 +2433,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         append_label(roinfo,
                      "=" * 6 + " Special Thank to : " + "=" * 300, "=" * 300)
+
         append_label(roinfo, "The french translation was done by FLIXX", )
 
-
-                
         # ----------------- Calibration
 
         val = RadioSettingValueBoolean(False)
@@ -2477,10 +2471,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             for sql in range(0, 10):
                 prefix = "_mem.cal." + bnd + "."
                 postfix = "[" + str(sql) + "]"
-                append_label(radio_setting_group, "Squelch " + str(sql))           
+                append_label(radio_setting_group, "Squelch " + str(sql))
+
                 name = prefix + "openRssiThr" + postfix
-
-
                 tempval = min_max_def(eval(name), 0, 255, 0)
                 val = RadioSettingValueInteger(0, 255, tempval)
                 radio_setting = RadioSetting(name, "Open RSSI Threshold", val)
@@ -2501,8 +2494,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                 name = prefix + "closeNoiseThr" + postfix
                 tempval = min_max_def(eval(name), 0, 127, 0)
                 val = RadioSettingValueInteger(0, 127, tempval)
-                radio_setting = RadioSetting(name, "Close Noise Threshold",
-                                             val)
+                radio_setting = RadioSetting(name, "Close Noise Threshold", val)
                 radio_setting_group.append(radio_setting)
 
                 name = prefix + "openGlitchThr" + postfix
@@ -2571,9 +2563,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                              (" (voltage calibration)" if lvl == 3 else ""),
                              val)
             radio_setting_group.append(radio_setting)
+
         radio_setting_group = RadioSettingGroup("vox_calibration", "Vox Calibration")
-
-
         calibration.append(radio_setting_group)
 
         for lvl in range(0, 10):
@@ -2678,9 +2669,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(help_group,"(x.xxK) = no incrementation of the frequency" , "Under each VFO" )
         append_label(help_group,"(WIDE) = Wide BF filter: 12.5kHz" , "Under each VFO" )
         append_label(help_group,"(NAR) = Narrow BF filter: 6.25kHz" , "Under each VFO" )
-
-
-       
+               
         append_label(help_group,"" , "" )
 
         append_label(help_group, "=" * 6 + "=" * 100, "=" * 6  + "=" * 100)
@@ -2691,14 +2680,13 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         help_group = RadioSettingGroup("Explain_Keyboard_HELP", "Keypad documentation" )
         help_user.append(help_group)
         append_label(help_group, "=" * 6 + " Keypad and buttons' function " + "=" * 50, "=" * 6  + " When pressing (F #) before the key " + "=" * 50)
-
                                                    
         append_label(help_group,"(1 BAND) = long press: change the active frequency band (F1 to F7)  " , "Same as long press  " )
         append_label(help_group,"(1 BAND) = short press: digit 1  "," " )
         append_label(help_group,"","" )
+
         append_label(help_group,"(2 A/B) = long press: change the active VFO, A(top) / B(bottom) " , "Same as long press " )
         append_label(help_group,"(2 A/B) = short press: digit 2  "," " )
-
 
         append_label(help_group,"","" )
         
@@ -2759,14 +2747,13 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(help_group,"(M A) = short press: Menu access","" )
 
         append_label(help_group,"","" )
+        
         append_label(help_group,"(Arrow UP B) = long press: scroll VFO/MR upwards","" )
         append_label(help_group,"(Arrow UP B) = short press: increase VFO/MR value ","increase squelch value" )
-
 
         append_label(help_group,"","" )
         append_label(help_group,"(Arrow DOWN C) = long press: scroll VFO/MR downwards","" )
         append_label(help_group,"(Arrow DOWN C) = short press: decrease VFO/MR value","decrease squelch value" )
-
 
         append_label(help_group,"","" )
         
@@ -2785,7 +2772,6 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         append_label(help_group,"","" )
         append_label(help_group,"(..)  = long press, user programmable button","" )
         append_label(help_group,"(..)  = short press, user programmable button","" )
-
 
         append_label(help_group,"","" )
         
@@ -2815,7 +2801,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         
         help_group = RadioSettingGroup("Chirp_Language_HELP",
-                                                "How to change CHIRP language")
+                                       "How to change CHIRP language")
         help_user.append(help_group)
         
         append_label(help_group,"It's not possible to change the language directly in CHIRP but...", )
@@ -2826,7 +2812,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         # -------- LAYOUT
         append_label(basic,
-                     "=" * 6 + " Start of F4HWN Settings. If this area needs to be uploaded, select \"Upload F4HWN's settings to radio\" below " + "=" * 300, "=" * 300)
+                     "=" * 6 + " Start of F4HWN Settings. If this area needs to be uploaded select the upload F4HWN" + "=" * 300, "=" * 300)
         basic.append(Upload_f4hwn)
         basic.append(SetLowSetting)
         basic.append(SetPttSetting)
