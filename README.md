@@ -1,7 +1,10 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
-In Version 2.8.0
-It's texte change to follow the firmware 2.8
+
+In Version 2.8.1
+Bug fix: In any programable key ( F1, F2, M ), if the action selected is between NONE to MODE, it's working... but any value greather then MORE the value in the driver have error when sent to the radio or read from the radio.
+
+It's texte change to follow the firmware 2.8.0
 
 In Version 2.7.0
 it's the url link update for the firware Armel has been update in english and french driver
