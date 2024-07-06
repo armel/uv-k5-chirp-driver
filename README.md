@@ -1,6 +1,9 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In Version 3.0.1
+Bug Fix: the scanlist priority was not working
+
 In Version 3.0.0  
 Bug Fix: the pop-up window in the menu unlock all was not done on the right item. 
 
