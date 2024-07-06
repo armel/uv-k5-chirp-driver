@@ -1,6 +1,28 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In Version 3.0.0  
+Bug Fix: the pop-up window in the menu unlock all was not done on the right item. 
+
+New thing : Add Flock option has Armel Add it
+
+![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/cc81c77b-2897-4f41-af70-e366d12fd7d7)
+
+  Add the new scan list number 3, add the selection of this scan list in slit option  ( in memory and in steeing scan list)
+
+![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/079b93cb-54ae-4da1-9ff5-3b8f6a55cada)
+
+![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/a4e1be78-a24e-48cf-a5bd-06cd5e6802b6)
+  
+  Add a new menu firmware in the setting, on the top of the list, to display firmware version and what version is it,, bandcope or broadcast
+  
+  ![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/25b91461-7f2b-4889-8d62-bcf1de0b0126)
+
+  
+  ![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/9482c6a0-259d-4973-96c2-49ca8713711c)
+
+
+
 In Version 2.8.1
 Bug fix: In any programable key ( F1, F2, M ), if the action selected is between NONE to MODE, it's working... but any value greather then MORE the value in the driver have error when sent to the radio or read from the radio.
 
