@@ -1,6 +1,32 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 3.1.0 :
+
+unknow bit change for specify name
+
+add web link
+
+explain how the change chirp language
+
+add User, low1 to low5 to the power level
+
+AM fix message information this has not change
+
+update info how to change language in chirp
+
+rename set_low to set pwr
+
+add the 3500ma battery selection
+
+![image](https://github.com/user-attachments/assets/8d593ea3-f0d9-44b0-9ddf-b3817a89d8c6)
+
+![image](https://github.com/user-attachments/assets/c10e4c17-eb50-4526-b69d-6c66bfb0310a)
+
+![image](https://github.com/user-attachments/assets/b32783f2-de66-4824-acf6-9cadf6de9c14)
+
+
+
 In Version 3.0.1
 Bug Fix: the scanlist priority was not working
 
