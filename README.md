@@ -4,7 +4,7 @@ Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 In version 3.1.0 :
 
 unknow bit change for specify name
-
+ 
 add web link
 
 explain how the change chirp language
