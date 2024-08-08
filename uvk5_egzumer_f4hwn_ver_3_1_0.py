@@ -40,6 +40,13 @@
 #       update info how to change language in chirp
 #       rename set_low to set pwr
 #       add the 3500ma battery selection
+#
+# 2024-08-08
+# Modifications to assign keyboard shortcuts, making lists more accessible by keyboard.
+# Specifically, power selection and scanlist selection.
+# Ken McMullan, M7KCM
+#
+#
 
 import webbrowser
 import os
@@ -432,14 +439,14 @@ SET_MET_LIST = ["TINY", "CLASSIC"]
 PTTID_LIST = ["OFF", "UP CODE", "DOWN CODE", "UP+DOWN CODE", "APOLLO QUINDAR"]
 
 # power          
-UVK5_POWER_LEVELS = [chirp_common.PowerLevel("USER = < 20mW to 5W", watts=0.000),
-                     chirp_common.PowerLevel("LOW 1 = < 20mW", watts=0.020),
-                     chirp_common.PowerLevel("LOW 2 = 125mW", watts=0.125),
-                     chirp_common.PowerLevel("LOW 3 = 250mW", watts=0.250),
-                     chirp_common.PowerLevel("LOW 4 = 500mW", watts=0.500),
-                     chirp_common.PowerLevel("LOW 5 = 1W", watts=1.00),
-                     chirp_common.PowerLevel("MID = 2W",  watts=2.00),
-                     chirp_common.PowerLevel("HIGH = 5W", watts=5.00),
+UVK5_POWER_LEVELS = [chirp_common.PowerLevel("0 USER = < 20mW to 5W", watts=0.000),
+                     chirp_common.PowerLevel("1 LOW 1 = < 20mW", watts=0.020),
+                     chirp_common.PowerLevel("2 LOW 2 = 125mW", watts=0.125),
+                     chirp_common.PowerLevel("3 LOW 3 = 250mW", watts=0.250),
+                     chirp_common.PowerLevel("4 LOW 4 = 500mW", watts=0.500),
+                     chirp_common.PowerLevel("5 LOW 5 = 1W", watts=1.00),
+                     chirp_common.PowerLevel("6 MID = 2W",  watts=2.00),
+                     chirp_common.PowerLevel("7 HIGH = 5W", watts=5.00),
                      ]
 # scrambler
 SCRAMBLER_LIST = ["OFF", "2600Hz", "2700Hz", "2800Hz", "2900Hz", "3000Hz",
@@ -589,7 +596,7 @@ BANDS_WIDE = {
         6: [470.0, 1300.0]
         }
 
-SCANLIST_LIST = ["None ", "List [1]", "List [2]", "List [1, 2]", "List [3]", "List [1, 3]", "List [2, 3]", "All List [1, 2, 3]"]
+SCANLIST_LIST = ["None ", "1 List [1]", "2 List [2]", "4 List [1, 2]", "3 List [3]", "6List [1, 3]", "6 List [2, 3]", "7 All List [1, 2, 3]"]
 SCANLIST_SELECT_LIST = ["LIST [0] NO LIST ", "LIST [1]", "LIST [2]", "LIST [3]", "LISTS [1, 2, 3]", "All Channel (ALL)"]
 
 DTMF_CHARS = "0123456789ABCD*# "
