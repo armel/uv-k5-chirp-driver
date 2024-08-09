@@ -1,6 +1,13 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 3.2.0 :
+
+#3.2.0: some info still in english in the french version, translates it
+#       add web link in firmware
+#       add tx lock in all channel
+#       update link pdf for 3.2
+
 In version 3.1.0 :
 
 unknow bit change for specify name
