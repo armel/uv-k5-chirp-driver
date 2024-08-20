@@ -1,6 +1,11 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 3.3.0 :
+
+#3.3.0: Add the Set Timer
+update info in help menu
+
 In version 3.2.0 :
 
 #3.2.0: some info still in english in the french version, translates it
