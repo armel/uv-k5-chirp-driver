@@ -58,6 +58,11 @@
 #       update link pdf for the 3.4
 #       Add 2 more youtube link
 
+#3.5.0: 
+#       change ScnRev 24/67 (Scan Resume Mode) to follow firmware
+#       add D Live checkbox in DTMF Settings
+#       some code refactoring
+
 import webbrowser
 import os
 
@@ -493,20 +498,16 @@ TALK_TIME_LIST = ["N/U", "N/U", "N/U", "N/U", "N/U", "30 sec", "35 sec", "40 sec
                   "14 min", "14 min : 5 sec", "14 min : 10 sec", "14 min : 15 sec", "14 min : 20 sec", "14 min : 25 sec", "14 min : 30 sec", "14 min : 35 sec", "14 min : 40 sec", "14 min : 45 sec", "14 min : 50 sec", "14 min : 55 sec",
                   "15 min"]
 
-# Set Off timer 
-SET_OFF_TMR_LIST = ["OFF", "00h:01m", "00h:02m", "00h:03m", "00h:04m", "00h:05m", "00h:06m", "00h:07m", "00h:08m", "00h:09m",
-                    "00h:10m", "00h:11m", "00h:12m", "00h:13m", "00h:14m", "00h:15m", "00h:16m", "00h:17m", "00h:18m", "00h:19m",
-                    "00h:20m", "00h:21m", "00h:22m", "00h:23m", "00h:24m", "00h:25m", "00h:26m", "00h:27m", "00h:28m", "00h:29m",
-                    "00h:30m", "00h:31m", "00h:32m", "00h:33m", "00h:34m", "00h:35m", "00h:36m", "00h:37m", "00h:38m", "00h:39m",
-                    "00h:40m", "00h:41m", "00h:42m", "00h:43m", "00h:44m", "00h:45m", "00h:46m", "00h:47m", "00h:48m", "00h:49m",
-                    "00h:50m", "00h:51m", "00h:52m", "00h:53m", "00h:54m", "00h:55m", "00h:56m", "00h:57m", "00h:58m", "00h:59m",
-                    "01h:00m", "01h:01m", "01h:02m", "01h:03m", "01h:04m", "01h:05m", "01h:06m", "01h:07m", "01h:08m", "01h:09m",
-                    "01h:10m", "01h:11m", "01h:12m", "01h:13m", "01h:14m", "01h:15m", "01h:16m", "01h:17m", "01h:18m", "01h:19m",
-                    "01h:20m", "01h:21m", "01h:22m", "01h:23m", "01h:24m", "01h:25m", "01h:26m", "01h:27m", "01h:28m", "01h:29m",
-                    "01h:30m", "01h:31m", "01h:32m", "01h:33m", "01h:34m", "01h:35m", "01h:36m", "01h:37m", "01h:38m", "01h:39m",
-                    "01h:40m", "01h:41m", "01h:42m", "01h:43m", "01h:44m", "01h:45m", "01h:46m", "01h:47m", "01h:48m", "01h:49m",
-                    "01h:50m", "01h:51m", "01h:52m", "01h:53m", "01h:54m", "01h:55m", "01h:56m", "01h:57m", "01h:58m", "01h:59m",
-                    "02h:00m"]
+SET_OFF_TMR_LIST = ["OFF"]
+
+# Add values from 00h:01m to 02h:00m
+for h in range(2):  # From 0 to 2 hours
+    if h == 1:  # Add 01h:00m
+        SET_OFF_TMR_LIST.append(f"{h:d}h:00m")
+    for m in range(1, 60):  # From 1 to 59 minutes (start at 1)
+        SET_OFF_TMR_LIST.append(f"{h:d}h:{m:02d}m")
+
+SET_OFF_TMR_LIST.append(f"2h:00m")
 
 # Auto Keypad Lock
 AUTO_KEYPAD_LOCK_LIST = ["OFF", "AUTO"]
@@ -579,34 +580,21 @@ FLOCK_LIST = ["DEFAULT+ (137-174, 400-470)",
               "DISABLE ALL",
               "UNLOCK ALL"]
 
-SCANRESUME_LIST = ["CARRIER FAST : Listen 100 milisecond until the signal disappears ",
-                   "CARRIER SLOW : Listen 2.5 second until the signal disappears ",
-                   "STOP : Stop scan when a signal is received ",
-                   "TIMEOUT 00m:05s : Listen for this time and resume ",
-                   "TIMEOUT 00m:10s : Listen for this time and resume ",
-                   "TIMEOUT 00m:15s : Listen for this time and resume ",
-                   "TIMEOUT 00m:20s : Listen for this time and resume ",
-                   "TIMEOUT 00m:25s : Listen for this time and resume ",
-                   "TIMEOUT 00m:30s : Listen for this time and resume ",
-                   "TIMEOUT 00m:35s : Listen for this time and resume ",
-                   "TIMEOUT 00m:40s : Listen for this time and resume ",
-                   "TIMEOUT 00m:45s : Listen for this time and resume ",
-                   "TIMEOUT 00m:50s : Listen for this time and resume ",
-                   "TIMEOUT 00m:55s : Listen for this time and resume ",
-                   "TIMEOUT 01m:00s : Listen for this time and resume ",
-                   "TIMEOUT 01m:05s : Listen for this time and resume ",
-                   "TIMEOUT 01m:10s : Listen for this time and resume ",
-                   "TIMEOUT 01m:15s : Listen for this time and resume ",
-                   "TIMEOUT 01m:20s : Listen for this time and resume ",
-                   "TIMEOUT 01m:25s : Listen for this time and resume ",
-                   "TIMEOUT 01m:30s : Listen for this time and resume ",
-                   "TIMEOUT 01m:35s : Listen for this time and resume ",
-                   "TIMEOUT 01m:40s : Listen for this time and resume ",
-                   "TIMEOUT 01m:45s : Listen for this time and resume ",
-                   "TIMEOUT 01m:50s : Listen for this time and resume ",
-                   "TIMEOUT 01m:55s : Listen for this time and resume ",
-                   "TIMEOUT 02m:00s : Listen for this time and resume "]
-                   
+SCANRESUME_LIST = ["STOP : Stop scan when a signal is received"]
+
+# Add "CARRIER" values
+for s in range(20):  # From 0 to 20s
+    for ms in ["250ms", "500ms", "750ms"] if s == 0 else ["000ms", "250ms", "500ms", "750ms"]:
+        SCANRESUME_LIST.append(f"CARRIER {s:02d}s:{ms} : Listen for this time until the signal disappears")
+
+SCANRESUME_LIST.append(f"CARRIER 20s:000ms : Listen for this time until the signal disappears")
+
+# Add "TIMEOUT" values
+for m in range(5, 125, 5):  # From 5 to 120 secondes (2 minutes)
+    minutes = m // 60
+    seconds = m % 60
+    SCANRESUME_LIST.append(f"TIMEOUT {minutes:02d}m:{seconds:02d}s : Listen for this time and resume")
+     
 WELCOME_LIST = ["Message line 1, Voltage, Sound (ALL)", "Make 2 short sounds (SOUND)", "User message line 1 and line 2 (MESSAGE)", "Battery voltage (VOLTAGE)", "NONE"]
 VOICE_LIST = ["OFF", "Chinese", "English"]
 
@@ -2492,8 +2480,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueList(SCANRESUME_LIST, None, tmpscanres)
         scn_rev_setting = RadioSetting("scan_resume_mode", "Scan Resume Mode (ScnRev)", val)
         scn_rev_setting.set_doc('ScnRev: Scan Resume Mode\n' + \
-                                '* CARRIER FAST : 100 milisecond, Resume scan after signal disappears\n' + \
-                                '* CARRIER SLOW : 2.5 second, Resume scan after signal disappears\n' + \
+                                '* CARRIER : X seconds, Resume scan after signal disappears\n' + \
                                 '* STOP : After receiving a signal, stop the scan\n' + \
                                 '* TIMEOUT : Resume scan after X seconds pause')
 
@@ -3348,10 +3335,10 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         dtmf.append(dw_code_setting)
         dtmf.append(d_prel_setting)
         dtmf.append(dtmf_side_tone_setting)
+        dtmf.append(d_live_setting)
         if _mem.BUILD_OPTIONS.ENABLE_DTMF_CALLING:
             dtmf.append(dtmf_resp_setting)
             dtmf.append(d_hold_setting)
-            dtmf.append(d_live_setting)
             dtmf.append(perm_kill_setting)
             dtmf.append(kill_code_setting)
             dtmf.append(rev_code_setting)
