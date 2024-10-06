@@ -2,6 +2,7 @@
 # Adapted For UV-K5 EGZUMER custom software By EGZUMER, JOC2
 # Re-Adapted For UV-K5 EGZUMER/F4HWN custom software By JOC2
 #
+#
 # based on template.py Copyright 2012 Dan Smith <dsmith@danplanet.com>
 #
 #
@@ -468,6 +469,7 @@ UVK5_POWER_LEVELS = [chirp_common.PowerLevel("USER = < 20mW to 5W", watts=0.000)
                      chirp_common.PowerLevel("MID = 2W",  watts=2.00),
                      chirp_common.PowerLevel("HIGH = 5W", watts=5.00),
                      ]
+
 # scrambler
 SCRAMBLER_LIST = ["OFF", "2600Hz", "2700Hz", "2800Hz", "2900Hz", "3000Hz",
                   "3100Hz", "3200Hz", "3300Hz", "3400Hz", "3500Hz"]
@@ -498,6 +500,7 @@ TALK_TIME_LIST = ["N/U", "N/U", "N/U", "N/U", "N/U", "30 sec", "35 sec", "40 sec
                   "14 min", "14 min : 5 sec", "14 min : 10 sec", "14 min : 15 sec", "14 min : 20 sec", "14 min : 25 sec", "14 min : 30 sec", "14 min : 35 sec", "14 min : 40 sec", "14 min : 45 sec", "14 min : 50 sec", "14 min : 55 sec",
                   "15 min"]
 
+# Set Off timer 
 SET_OFF_TMR_LIST = ["OFF"]
 
 # Add values from 00h:01m to 02h:00m
@@ -580,6 +583,7 @@ FLOCK_LIST = ["DEFAULT+ (137-174, 400-470)",
               "DISABLE ALL",
               "UNLOCK ALL"]
 
+# Scan Resum List              
 SCANRESUME_LIST = ["STOP : Stop scan when a signal is received"]
 
 # Add "CARRIER" values
@@ -594,7 +598,8 @@ for m in range(5, 125, 5):  # From 5 to 120 secondes (2 minutes)
     minutes = m // 60
     seconds = m % 60
     SCANRESUME_LIST.append(f"TIMEOUT {minutes:02d}m:{seconds:02d}s : Listen for this time and resume")
-     
+
+# Welcome and Voice list     
 WELCOME_LIST = ["Message line 1, Voltage, Sound (ALL)", "Make 2 short sounds (SOUND)", "User message line 1 and line 2 (MESSAGE)", "Battery voltage (VOLTAGE)", "NONE"]
 VOICE_LIST = ["OFF", "Chinese", "English"]
 
@@ -2480,10 +2485,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         val = RadioSettingValueList(SCANRESUME_LIST, None, tmpscanres)
         scn_rev_setting = RadioSetting("scan_resume_mode", "Scan Resume Mode (ScnRev)", val)
         scn_rev_setting.set_doc('ScnRev: Scan Resume Mode\n' + \
-                                '* CARRIER : X seconds, Resume scan after signal disappears\n' + \
+                                '* CARRIER : Listen X seconds after signal disappears and resume\n' + \
                                 '* STOP : After receiving a signal, stop the scan\n' + \
                                 '* TIMEOUT : Resume scan after X seconds pause')
-
         
         tmpvoice = list_def(_mem.voice, VOICE_LIST, 0)
         val = RadioSettingValueList(VOICE_LIST, None, tmpvoice)
