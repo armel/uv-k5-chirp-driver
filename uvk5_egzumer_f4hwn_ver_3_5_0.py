@@ -62,6 +62,7 @@
 #3.5.0: 
 #       change ScnRev 24/67 (Scan Resume Mode) to follow firmware
 #       add D Live checkbox in DTMF Settings
+#       change KeyLck 30/67 to follow firmware
 #       some code refactoring
 
 import webbrowser
@@ -512,8 +513,14 @@ for h in range(2):  # From 0 to 2 hours
 
 SET_OFF_TMR_LIST.append(f"2h:00m")
 
-# Auto Keypad Lock
-AUTO_KEYPAD_LOCK_LIST = ["OFF", "AUTO"]
+# Add Auto Keypad Lock values
+AUTO_KEYPAD_LOCK_LIST = ["OFF"]
+for s in range(10):  # From 0 to 10 minutes
+    for ms in ["00s", "15s", "30s", "45s"]:
+        if s == 0 and ms == "00s":  # Cancel "00m:00s"
+            continue
+        AUTO_KEYPAD_LOCK_LIST.append(f"{s:02d}m:{ms}")
+AUTO_KEYPAD_LOCK_LIST.append("10m:00s")  # Add "10m:00s" a the end
 
 # battery save
 BATSAVE_LIST = ["OFF", "1:1", "1:2", "1:3", "1:4"]
@@ -2332,10 +2339,10 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         
         tmpval = list_def(_mem.auto_keypad_lock, AUTO_KEYPAD_LOCK_LIST, 1)
         val = RadioSettingValueList(AUTO_KEYPAD_LOCK_LIST, None, tmpval)
-        auto_keypad_lock_setting = RadioSetting("auto_keypad_lock", "Auto Lock Keypad After Inactivity 15s (KeyLck)", val)
+        auto_keypad_lock_setting = RadioSetting("auto_keypad_lock", "Auto Lock Keypad After Delay (KeyLck)", val)
         auto_keypad_lock_setting.set_doc('KeyLck: Keypad lock\n' + \
-                                         '* AUTO : After 15s of inactivity\n' + \
-                                         '* OFF : No keypad lock')
+                                         'OFF (no keypad lock)\n' \
+                                         'or Delay (from 15s to 10m) of inactivity')
                                          
         tmptot = list_def(_mem.max_talk_time,  TALK_TIME_LIST, 1)
         val = RadioSettingValueList(TALK_TIME_LIST, None, tmptot)
