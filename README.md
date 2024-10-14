@@ -1,6 +1,20 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+
+
+In version 3.5.1 :
+
+Fix the duplex mode related to issue in github, 
+update link pdf for the 3.5 
+
+In version 3.5.0 :
+
+change ScnRev 24/67 (Scan Resume Mode) to follow firmware
+add D Live checkbox in DTMF Settings
+change KeyLck 30/67 to follow firmware
+some code refactoring
+
 In version 3.4.0 :
 
 remove tx250 tx350 tx500 Setting has firmware not use it any more ,
