@@ -1,7 +1,7 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
-In version 3.5.1 :
+In version 3.5.2 :
 
 Modify the way the setting of f4hwn is download to the radio, now it's standard, when send data  all setting are sent
 
@@ -193,24 +193,5 @@ do not forget to save this reading if you want to keep this data for futur uses.
 
 **********************************************************************************************************************
 The option for the F4HWN firmware are under Basic Setting, on the top
-
-![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/52e3c299-ebf3-4696-8a04-582f93921114)
-
-If you want to upload the setting of F4HWN to the radio, select the Upload F4HWN setting to radio (1),
-then upload to the radio (2), 
-
-![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/e8558d44-48f4-44c3-9ae5-c900183397cf)
-
-then press ok, 
-
-![image](https://github.com/armel/uv-k5-chirp-driver/assets/56229329/cbd461c3-6f95-4e54-aff6-4469146f04d9)
-
-The upload will be realy fast ....
-when finish, the radio will reboot after.
-******************************************************************************************************************
-This will ONLY and ONLY upload the setting of F4HWN to the radio, all other setting in chirp will stay in chirp.
-******************************************************************************************************************
-
-To upload all the other setting in chirp to the radio, remove the selection of the Upload F4HWN setting to radio (1) and then upload to the radio (2), then press ok, the upload will take some time, when finish the radio will reboot.
 
 Enjoy.
