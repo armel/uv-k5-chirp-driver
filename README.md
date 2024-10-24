@@ -3,7 +3,7 @@ Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
 In version 3.5.2 :
 
-Modify the way the setting of f4hwn is download to the radio, now it's standard, when send data  all setting are sent
+Modify the way the setting of f4hwn is upload to the radio, now it's standard, when send data  all setting are sent
 
 
 In version 3.5.1 :
