@@ -515,7 +515,7 @@ TALK_TIME_LIST = ["N/U", "N/U", "N/U", "N/U", "N/U", "30 sec", "35 sec", "40 sec
                   "15 min"]
 
 # Set NFM value
-SET_NFM_LIST = ["12.5kHz", "6.25kHz"]
+SET_NFM_LIST = ["NARROW", "NARROWER"]
 
 # Set Off timer 
 SET_OFF_TMR_LIST = ["OFF"]
