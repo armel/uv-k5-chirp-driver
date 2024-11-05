@@ -1,6 +1,12 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 3.6.0 :
+
+change BatSav 32/68 and 1:5 value to follow firmware
+add SetNFM 68/68 to follow firmware
+add new video link (Youtube from 4S7JL_SRI_LANKA)
+
 In version 3.5.2 :
 
 Modify the way the setting of f4hwn is upload to the radio, now it's standard, when send data  all setting are sent
