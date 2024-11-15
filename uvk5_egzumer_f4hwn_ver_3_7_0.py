@@ -89,6 +89,7 @@
 
 #3.7.0:
 #       add support for RescueOps special version
+#       add the new link for the pdf of alain   
 
 import webbrowser
 import os
@@ -123,7 +124,7 @@ CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/relea
 
 CHAINE_F4HWN = "https://www.youtube.com/@f4hwn" 
 
-PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/dmg6200dr5gwsp5jzg0u1/MENU-FIRMWARE-F4HWN-v3.6.pdf?e=5&fbclid=IwY2xjawGY2uxleHRuA2FlbQIxMQABHXNHw40rWBpFMs0ilSeHzd9HFtYNpqsVUCn5Z1CDlnF8-77WyVRIDFxN1A_aem_hxauTJUDUHigXSvGzeqtIg&rlkey=713hs0x0fj9al6ulcbyncod8b&dl=0"
+PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/6982wxxjkp85knanw8vkk/MENU-FIRMWARE-F4HWN-v3.7.pdf?rlkey=z284qivesxemopxqxapy4c6ck&e=2&dl=0"
 PDF_FILE_QUICK_KEY = "https://github.com/armel/uv-k5-chirp-driver/blob/main/20240530%20Quick%20Keys%20F4HWNv%202.x.pdf"
 
 YOUTUBE_INFO_FUNKWELLE = "https://www.youtube.com/watch?v=4xj0-VUe5aE"
