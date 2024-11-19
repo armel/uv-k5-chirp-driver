@@ -93,7 +93,7 @@
 
 #3.7.1:
 #       fix bug with MicBar upload
-#       fix bug with BatTxt upload  
+#       fix bug with BatTxt upload
 
 import webbrowser
 import os
@@ -119,7 +119,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/11/13 (c) EGZUMER + F4HWN v3.7.0 FR"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/11/19 (c) EGZUMER + F4HWN v3.7.1 FR"
 FIRMWARE_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom/releases"
 
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/releases"
