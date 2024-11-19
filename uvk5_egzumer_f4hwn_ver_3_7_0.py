@@ -1530,11 +1530,11 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                 _mem.AM_fix = int(element.value)
 
             # mic_bar
-            elif elname == "mem.mic_bar":
+            elif elname == "mic_bar":
                 _mem.mic_bar = int(element.value)
 
             # Batterie txt
-            elif elname == "_mem.battery_text":
+            elif elname == "battery_text":
                 _mem.battery_text = int(element.value)
 
             # Tail tone elimination
