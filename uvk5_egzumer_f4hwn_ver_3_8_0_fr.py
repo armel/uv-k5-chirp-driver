@@ -721,7 +721,7 @@ KEYACTIONS_LIST = ["NONE",
                    "Bascule mode Reception *Main only,*Dual RX,*Cross Band,*TX Dual RX (RX MODE)",
                    "MAIN ONLY", 
                    "Bascule le mode PTT (PTT)",
-                   "Bascule le filtre BF (WIDE / NARROW)"
+                   "Bascule le filtre BF (WIDE / NARROW)",
                    "BACKLIGHT",
                    "POWER HIGH",
                    "REMOVE OFFSET"
