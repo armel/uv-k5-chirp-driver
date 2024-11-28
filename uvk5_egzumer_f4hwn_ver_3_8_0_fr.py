@@ -129,7 +129,7 @@ CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/relea
 
 CHAINE_F4HWN = "https://www.youtube.com/@f4hwn" 
 
-PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/6982wxxjkp85knanw8vkk/MENU-FIRMWARE-F4HWN-v3.7.pdf?rlkey=z284qivesxemopxqxapy4c6ck&e=2&dl=0"
+PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/2u6gavc7140wl7gbiyn7x/MENU-FIRMWARE-F4HWN-v3.8.pdf?rlkey=br01r157df4hzqnu1y6odiccm&e=1&dl=0"
 PDF_FILE_QUICK_KEY = "https://github.com/armel/uv-k5-chirp-driver/blob/main/20240530%20Quick%20Keys%20F4HWNv%202.x.pdf"
 
 YOUTUBE_INFO_FUNKWELLE = "https://www.youtube.com/watch?v=4xj0-VUe5aE"
@@ -1847,6 +1847,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                     ValFirm = ValFirm + " *** avec Broadcast ***"
                 elif not _mem.BUILD_OPTIONS.ENABLE_FMRADIO and _mem.BUILD_OPTIONS.ENABLE_BANDSCOPE :          
                     ValFirm = ValFirm + " *** avec BandScope ***"
+                elif _mem.BUILD_OPTIONS.ENABLE_FEAT_F4HWN_RESCUE_OPS :   
+                    ValFirm = ValFirm + " *** with RescupOps ***"
         radio_firmware = RadioSettingGroup("radio_firmwarebasic", ValFirm)
 
 # add link for mise a jour information
