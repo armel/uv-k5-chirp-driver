@@ -1858,7 +1858,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                 elif not _mem.BUILD_OPTIONS.ENABLE_FMRADIO and _mem.BUILD_OPTIONS.ENABLE_BANDSCOPE :          
                     ValFirm = ValFirm + " *** with BandScope ***"
                 elif _mem.BUILD_OPTIONS.ENABLE_FEAT_F4HWN_RESCUE_OPS :   
-                    ValFirm = ValFirm + " *** with RescupOps ***"
+                    ValFirm = ValFirm + " *** with RescueOps ***"
         radio_firmware = RadioSettingGroup("radio_firmwarebasic", ValFirm)
 # add link for mise a jour information
 
