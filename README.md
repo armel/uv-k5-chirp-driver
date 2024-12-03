@@ -1,6 +1,24 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 3.8.1 :
+
+fix UNUSED bug (Duplicate definition for UNUSED #48)
+
+In version 3.8.0 :
+
+add POWER HIGH and REMOVE OFFSET action
+
+In version 3.7.1 :
+
+fix bug with MicBar upload
+fix bug with BatTxt upload
+
+In version 3.7.0 :
+
+add support for RescueOps special version
+add the new link for the pdf of alain   
+
 In version 3.6.3 :
 
 updade duplex from issue #33 in github
@@ -25,7 +43,6 @@ In version 3.5.2 :
 
 Modify the way the setting of f4hwn is upload to the radio, now it's standard, when send data  all setting are sent
 
-
 In version 3.5.1 :
 
 Fix the duplex mode related to issue in github, 
@@ -45,7 +62,6 @@ add the SetOff to turn off the radio ,
 change ScnRev 24/67 (Scan Resume Mode) to follow firmware ,
 update link pdf for the 3.4 ,
 Add 2 more youtube link
-
 
 In version 3.3.0 :
 
