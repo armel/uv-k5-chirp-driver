@@ -98,7 +98,7 @@
 #3.8.0:
 #       add POWER HIGH and REMOVE OFFSET action
 
-#3.8.1:
+#3.9.0:
 #       fix UNUSED bug (Duplicate definition for __UNUSED #48)
 
 import webbrowser
@@ -125,7 +125,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/12/02 (c) EGZUMER + F4HWN v3.8.1 FR"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/12/25 (c) EGZUMER + F4HWN v3.9.0 FR"
 FIRMWARE_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom/releases"
 
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/releases"
