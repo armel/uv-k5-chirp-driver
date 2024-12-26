@@ -125,7 +125,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/12/25 (c) EGZUMER + F4HWN v3.9.0 FR"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2024/12/26 (c) EGZUMER + F4HWN v3.9.1 FR"
 FIRMWARE_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom/releases"
 
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/releases"
