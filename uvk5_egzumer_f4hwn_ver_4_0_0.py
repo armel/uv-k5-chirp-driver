@@ -130,7 +130,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2025/02/09 (c) EGZUMER + F4HWN v4.0.0"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2025/02/14 (c) EGZUMER + F4HWN v4.0.0"
 FIRMWARE_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom/releases"
 
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/releases"
@@ -1940,6 +1940,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             has_backlight_off = self._memobj.BUILD_OPTIONS.ENABLE_BLMIN_TMP_OFF
             has_fm_radio = self._memobj.BUILD_OPTIONS.ENABLE_FMRADIO
             has_rescue_ops = self._memobj.BUILD_OPTIONS.ENABLE_FEAT_F4HWN_RESCUE_OPS
+            has_vox = self._memobj.BUILD_OPTIONS.ENABLE_VOX
             
             lst = KEYACTIONS_LIST.copy()
             lst.remove("BACKLIGHT") # Only for key press on TX
@@ -1957,6 +1958,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             if not has_rescue_ops:
                 lst.remove("POWER HIGH")
                 lst.remove("REMOVE OFFSET")
+            if not has_vox:
+                lst.remove("MUTE")
 
             action_num = int(action_num)
             if action_num >= len(KEYACTIONS_LIST) or \
