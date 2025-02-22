@@ -130,14 +130,14 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2025/02/14 (c) EGZUMER + F4HWN v4.0.0"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2025/02/22 (c) EGZUMER + F4HWN v4.0.0"
 FIRMWARE_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom/releases"
 
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/releases"
 
 CHAINE_F4HWN = "https://www.youtube.com/@f4hwn" 
 
-PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/0ddblx5al5yzc22ubqyrt/MENU-FIRMWARE-F4HWN-v3.9.pdf?rlkey=ld8rdfxj21f2xs293iuxl277z&dl=0"
+PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/fg76yszj78apurovjtnz2/MENU-FIRMWARE-F4HWN-v4.0.pdf?rlkey=89hk8p8dpev81k51pktlw12vz&e=1&dl=0"
 PDF_FILE_QUICK_KEY = "https://github.com/armel/uv-k5-chirp-driver/blob/main/20240530%20Quick%20Keys%20F4HWNv%202.x.pdf"
 
 YOUTUBE_INFO_FUNKWELLE = "https://www.youtube.com/watch?v=4xj0-VUe5aE"
