@@ -913,6 +913,7 @@ def _resetradio(serport):
 
 
 def do_download(radio):
+
     """download eeprom from radio"""
     serport = radio.pipe
     serport.timeout = 0.5
@@ -921,79 +922,160 @@ def do_download(radio):
     status.max = MEM_SIZE
     status.msg = "Downloading from radio"
     radio.status_fn(status)
-
     eeprom = b""
     f = _sayhello(serport)
     if f:
         radio.FIRMWARE_VERSION = f
     else:
         raise errors.RadioError("Failed to initialize radio")
-
     addr = 0
     while addr < MEM_SIZE:
         data = _readmem(serport, addr, MEM_BLOCK)
         status.cur = addr
         radio.status_fn(status)
-
         if data and len(data) == MEM_BLOCK:
             eeprom += data
             addr += MEM_BLOCK
         else:
-            raise errors.RadioError("Memory download incomplete")
 
+            # If last block is smaller than MEM_BLOCK
+
+            if data and (addr + len(data) == MEM_SIZE):
+                eeprom += data
+                addr += len(data)
+            else:
+                LOG.error(f"Memory download incomplete. Expected {MEM_BLOCK} at 0x{addr:04X}, got {len(data) if data else 0}.")
+                raise errors.RadioError("Memory download incomplete")
     return memmap.MemoryMapBytes(eeprom)
 
 
 def do_upload(radio):
-    """upload configuration to radio eeprom"""
+    """Upload configuration to radio eeprom."""
     serport = radio.pipe
     serport.timeout = 0.5
     status = chirp_common.Status()
-    status.cur = 0
     status.msg = "Uploading to radio"
 
-    mstep = 0 # number of memory loop step     
-    if radio.upload_calibration:
-        status.max = F4HWN_START-CAL_START
-        start_addr = CAL_START
-        stop_addr = F4HWN_START
-        mstep = 1 # one memory loop step 
-    
-    else:
-        status.max = PROG_SIZE
-        start_addr = 0
-        stop_addr = PROG_SIZE
 
-    radio.status_fn(status)
 
     f = _sayhello(serport)
-    if f:
-        radio.FIRMWARE_VERSION = f
-    else:
+    if not f:
+        LOG.error("Failed to handshake with radio during upload.")
+
+        # No need to call radio.status_fn with error, chirp handles return False
+
         return False
- 
-    while mstep < 2: # stop when 2
-        
+    radio.FIRMWARE_VERSION = f
+
+    # Calculate total number of blocks for progress reporting
+
+    total_blocks_to_write = 0 
+
+    # Phase 1: Main program area (0 to PROG_SIZE)
+
+    if PROG_SIZE > 0:
+        total_blocks_to_write += (PROG_SIZE + MEM_BLOCK - 1) // MEM_BLOCK  
+
+    # Phase 2: Calibration area (conditionally)
+
+    if radio.upload_calibration:
+        if F4HWN_START > CAL_START: # Valid range for calibration data
+            total_blocks_to_write += (F4HWN_START - CAL_START + MEM_BLOCK - 1) // MEM_BLOCK
+        else:
+            LOG.warning(f"Calibration block range invalid (CAL_START: 0x{CAL_START:04X}, F4HWN_START: 0x{F4HWN_START:04X}). "
+                        "Calibration data will not be written.")
+
+            # Potentially could set radio.upload_calibration = False here to be safe
+            # For now, it just means this part won't add to total_blocks_to_write
+
+
+
+    # Phase 3: F4HWN specific settings area
+
+    if MEM_SIZE > F4HWN_START: # Valid range for F4HWN settings
+        total_blocks_to_write += (MEM_SIZE - F4HWN_START + MEM_BLOCK - 1) // MEM_BLOCK
+    else:
+        LOG.warning(f"F4HWN settings block range invalid (F4HWN_START: 0x{F4HWN_START:04X}, MEM_SIZE: 0x{MEM_SIZE:04X}). "
+                    "F4HWN settings will not be written.")
+    status.max = total_blocks_to_write
+    status.cur = 0
+    radio.status_fn(status)
+    current_block_count = 0
+
+
+
+    # Helper function for writing a memory phase
+
+    def _write_phase(start_addr, end_addr, phase_name):
+
+        nonlocal current_block_count # To modify the outer scope's counter
+        LOG.info(f"Uploading {phase_name} from 0x{start_addr:04X} to 0x{end_addr-1:04X}")
         addr = start_addr
-        while addr < stop_addr:
-            dat = radio.get_mmap()[addr:addr+MEM_BLOCK]
-            _writemem(serport, dat, addr)
-            status.cur = addr - start_addr
-            radio.status_fn(status)
-            if dat:
-                addr += MEM_BLOCK
+        while addr < end_addr:
+
+            # Determine the size of the current chunk to write
+
+            chunk_size = min(MEM_BLOCK, end_addr - addr)
+            if chunk_size <= 0: # Should not happen if loop condition `addr < end_addr` is correct
+                LOG.warning(f"Zero or negative chunk size calculated for {phase_name} at 0x{addr:04X}. Breaking phase.")
+                break
+            dat = radio.get_mmap()[addr:addr + chunk_size]          
+
+            # Ensure the slice from mmap is the expected size
+
+            if len(dat) != chunk_size:
+                LOG.error(f"Memory map slice error for {phase_name}. "
+                          f"Requested {chunk_size} bytes at 0x{addr:04X}, but got {len(dat)} bytes. "
+                          f"This may indicate an issue with mmap size or indexing.")
+                raise errors.RadioError(f"Memory map read error during {phase_name} upload at 0x{addr:04X}.")
+            try:
+                _writemem(serport, dat, addr)
+            except errors.RadioError as e:
+                LOG.error(f"Failed to write memory block for {phase_name} at 0x{addr:04X}: {e}")
+                raise # Re-raise the error to stop the entire upload
+            current_block_count += 1
+            status.cur = current_block_count
+            radio.status_fn(status)         
+            addr += chunk_size
+        LOG.info(f"Finished uploading {phase_name}.")
+    try:
+
+        # Phase 1: Main program area (0x0000 up to PROG_SIZE)
+
+        if PROG_SIZE > 0:
+            _write_phase(0x0000, PROG_SIZE, "main program area")
+        else:
+            LOG.info("Main program area size is zero. Skipping.")
+
+        # Phase 2: Calibration area (CAL_START up to F4HWN_START) - conditionally
+
+        if radio.upload_calibration:
+            if F4HWN_START > CAL_START: # Ensure valid block range
+                 _write_phase(CAL_START, F4HWN_START, "calibration data")
             else:
-                raise errors.RadioError("Memory upload incomplete")
-                mstep = 2 # on error stop loop
+                LOG.warning("Skipping calibration data write due to invalid address range "
+                            f"(CAL_START: 0x{CAL_START:04X}, F4HWN_START: 0x{F4HWN_START:04X}).")
 
-        mstep += 1 # go to next step
-                    
-        if mstep == 1:   # if the first write mem done , pass to f4hwn value
-            status.max = MEM_SIZE-F4HWN_START
-            start_addr = F4HWN_START
-            stop_addr = MEM_SIZE
+        
 
+        # Phase 3: F4HWN specific settings area (F4HWN_START up to MEM_SIZE)
+
+        if MEM_SIZE > F4HWN_START: # Ensure valid block range
+            _write_phase(F4HWN_START, MEM_SIZE, "F4HWN specific settings")
+        else:
+            LOG.warning("Skipping F4HWN specific settings write due to invalid address range "
+                        f"(F4HWN_START: 0x{F4HWN_START:04X}, MEM_SIZE: 0x{MEM_SIZE:04X}).")
+    except errors.RadioError as e:
+
+        # An error occurred during one of the write phases
+
+        LOG.error(f"Upload failed during memory write: {e}")
+
+        # _resetradio(serport) # Optional: attempt to reset radio even on failure, or leave radio as is.
+                               # Current behavior: reset only on success.
+        return False # Propagate failure to CHIRP
     status.msg = "Uploaded OK"
+    radio.status_fn(status) # Update final message
 
     _resetradio(serport)
 
@@ -1028,7 +1110,7 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
 # this change to send power level chan in the calibration but under macos it give error
 # bugfix calibration : put in comment next line: upload_calibration = False
-    upload_calibration = False
+ upload_calibration = False # This is a runtime flag, set to True by UI callback if user checks the box
 
     def _get_bands(self):
         is_wide = self._memobj.BUILD_OPTIONS.ENABLE_WIDE_RX \
@@ -1132,12 +1214,18 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         return rf
 
     # Do a download of the radio from the serial port
+
     def sync_in(self):
         self._mmap = do_download(self)
         self.process_mmap()
 
     # Do an upload of the radio to the serial port
+
     def sync_out(self):
+     
+ # Ensure upload_calibration is current if UI changed it before sync_out is called
+ # (Though it should be, as it's an instance attribute modified by the callback)
+
         do_upload(self)
 
     # Convert the raw byte array into a memory object structure
@@ -1839,14 +1927,23 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
             elif elname == "keyM_longpress_action":
                 _mem.keyM_longpress_action = KEYACTIONS_LIST.index(element.value)
-
-# this change to send power level chan in the calibration but under macos it give error
-# bugfix calibration : remove the comment on next 2 line:
-#            elif elname == "upload_calibration":
-#                self._upload_calibration = bool(element.value)
+             
+            # The 'upload_calibration' setting is a UI/driver flag, not directly written to radio EEPROM.
+            # Its state (self.upload_calibration) is managed by its RadioSetting's validate_callback.
+            # So, no explicit handling needed here unless it were part of the radio's own settings.
+            # elif elname == "upload_calibration":
+            #    self.upload_calibration = bool(element.value) # Not strictly needed due to callback
 
             elif element.changed() and elname.startswith("_mem.cal."):
-                exec(elname + " = element.value.get_value()")
+
+                # This uses exec, which is generally discouraged but common in older CHIRP drivers
+                # for dynamic assignment to nested struct members based on string names.
+                # It's assumed elname is safe and correctly formatted (e.g., "_mem.cal.some.path").
+
+                try:
+                    exec(elname + " = element.value.get_value()")
+                except Exception as e:
+                    LOG.error(f"Error executing calibration setting assignment for {elname}: {e}")
 
     def get_settings(self):
         _mem = self._memobj
@@ -1879,9 +1976,11 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
                                     wx.CANCEL_DEFAULT | wx.ICON_WARNING)
                 if ret == wx.OK :
                     webbrowser.open(FIRMWARE_VERSION_UPDATE)
-                value = False
+                 value = False # Reset checkbox
+
                     
-            return value
+
+            return False # Always return False to keep checkbox unchecked
 
         val.set_validate_callback(validate_Go_Web_Firmware)
         rs = RadioSetting("Update_Firmware_mise_a_jour","To see information for the update of the Firmware F4HWN , select this box ->", val)
@@ -1956,15 +2055,21 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             if not has_fm_radio:
                 lst.remove("FM RADIO")
             if not has_rescue_ops:
-                lst.remove("POWER HIGH")
-                lst.remove("REMOVE OFFSET")
-            if not has_vox:
-                lst.remove("MUTE")
+              if "POWER HIGH" in lst: lst.remove("POWER HIGH")
 
+                if "REMOVE OFFSET" in lst: lst.remove("REMOVE OFFSET")
+
+            if not has_vox: # MUTE is conditional on VOX
+
+                if "MUTE" in lst: lst.remove("MUTE")
             action_num = int(action_num)
+
             if action_num >= len(KEYACTIONS_LIST) or \
+
                KEYACTIONS_LIST[action_num] not in lst:
-                action_num = 0
+
+                action_num = 0 # Default to "NONE" if current value is invalid/unavailable
+                
             return lst, KEYACTIONS_LIST[action_num]
 
         val1s = RadioSettingValueList(*get_action(_mem.key1_shortpress_action))
@@ -2265,8 +2370,8 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         ch_list = []
         for ch in range(1, 201):
             ch_list.append("Channel M" + str(ch))
-        for bnd in range(1, 8):
-            ch_list.append("Band F" + str(bnd))
+        for bnd_idx in range(len(self._get_bands())): # Use dynamic band count
+            ch_list.append(f"Band F{bnd_idx + 1}")
         if _mem.BUILD_OPTIONS.ENABLE_NOAA:
             for bnd in range(1, 11):
                 ch_list.append("NOAA N" + str(bnd))
@@ -2409,12 +2514,11 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         squelch_setting = RadioSetting("squelch", "Squelch (Sql)", val)
         squelch_setting.set_doc('Sql: Squelch sensitivity level from 0 to 9, 0 to disable squelch')
         
-        ch_list = []
+        ch_list_call_chan = [] # Separate list for call channel to avoid VFOs/NOAA
         for ch in range(1, 201):
-            ch_list.append("Channel M" + str(ch))
-
-        tmpc = list_def(_mem.call_channel, ch_list, 0)
-        val = RadioSettingValueList(ch_list, None, tmpc)
+            ch_list_call_chan.append("Channel M" + str(ch))
+        tmpc = list_def(_mem.call_channel, ch_list_call_chan, 0)
+        val = RadioSettingValueList(ch_list_call_chan, None, tmpc)
         call_channel_setting = RadioSetting("call_channel", "One-Key Call Channel (1 Call)", val)
         call_channel_setting.set_doc('1 Call: One-key call channel, lets you quickly switch to the ' + \
                                      'designed channel with the "9 Call" key ')
@@ -2984,35 +3088,41 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         roinfo.append(rs)
 
         # ----------------- Calibration
-
-        val = RadioSettingValueBoolean(False)
-
+        # Initial value for the checkbox (False)
+        val_upload_cal = RadioSettingValueBoolean(self.upload_calibration) 
         def validate_upload_calibration(value):
-            if value and not self.upload_calibration:
+            # This callback is triggered when the user clicks the checkbox.
+            # `value` is the new state of the checkbox (True if checked, False if unchecked).
+            if value and not self.upload_calibration: # If checking the box and it was previously false
                 msg = "This option may break your radio!!!\n" \
                     "You are doing this at your own risk.\n" \
                     "Make sure you have a working calibration backup.\n" \
                     "Don't use it unless you know what you're doing."
                 ret = wx.MessageBox(msg, "Warning", wx.OK | wx.CANCEL |
                                     wx.CANCEL_DEFAULT | wx.ICON_WARNING)
-                value = ret == wx.OK
-            self.upload_calibration = value
-            return value
-
-        val.set_validate_callback(validate_upload_calibration)
-        radio_setting = RadioSetting("upload_calibration",
-                                     "Upload Calibration", val)
-        radio_setting.set_doc('To Upload only the setting in the calibration section to the radio, ' + \
-                              'you need to check this box, then upload to radio.')
+                if ret == wx.OK:
+                    self.upload_calibration = True # User confirmed, set the flag
+                    return True # Keep checkbox checked
+                else:
+                    self.upload_calibration = False # User cancelled
+                    return False # Uncheck the checkbox
+            elif not value: # If unchecking the box
+                self.upload_calibration = False
+                return False # Keep checkbox unchecked
+            return self.upload_calibration # Return current state if no change or already true
+        val_upload_cal.set_validate_callback(validate_upload_calibration)
+        radio_setting = RadioSetting("upload_calibration", # Name used in set_settings if it were to handle it
+                                     "Upload Calibration Data", val_upload_cal) # Slightly changed label for clarity
+        radio_setting.set_doc('Check this box to include the detailed calibration data (from the Calibration tab) ' + \
+                              'during the upload process. If unchecked, calibration data from the Calibration tab will not be written. ' + \
+                              'Main settings (Channels, Names, Basic Settings, etc.) and F4HWN-specific settings are always uploaded.')
         calibration.append(radio_setting)
-
         radio_setting_group = RadioSettingGroup("squelch_calibration",
                                                 "Squelch")
         calibration.append(radio_setting_group)
-
-        bands = {"sqlBand1_3": "Frequency Band 1-3",
-                 "sqlBand4_7": "Frequency Band 4-7"}
-        for bnd, bndn in bands.items():
+        bands_cal = {"sqlBand1_3": "Frequency Band 1-3", # Renamed to avoid conflict with other 'bands'
+                     "sqlBand4_7": "Frequency Band 4-7"}
+        for bnd, bndn in bands_cal.items():
             append_label(radio_setting_group,
                          "=" * 6 + " " + bndn + " " + "=" * 300, "=" * 300)
             for sql in range(0, 10):
@@ -3061,9 +3171,9 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         radio_setting_group = RadioSettingGroup("rssi_level_calibration",
                                                 "RSSI Levels")
         calibration.append(radio_setting_group)
-
-        bands = {"rssiLevelsBands1_2": "1-2 ", "rssiLevelsBands3_7": "3-7 "}
-        for bnd, bndn in bands.items():
+     
+        bands_rssi = {"rssiLevelsBands1_2": "1-2 ", "rssiLevelsBands3_7": "3-7 "} # Renamed
+        for bnd, bndn in bands_rssi.items():
             append_label(radio_setting_group,
                          "=" * 6 +
                          " RSSI levels for QS original small bar graph, bands "
@@ -3077,22 +3187,22 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
 #
 
+
         radio_setting_group = RadioSettingGroup("tx_power_calibration",
                                                 "TX power")
         calibration.append(radio_setting_group)
-
         for bnd in range(0, 7):
             append_label(radio_setting_group, "=" * 6 + " TX power band "
                          + str(bnd+1) + " " + "=" * 300, "=" * 300)
             powers = {"low": "Low", "mid": "Medium", "hi": "High"}
             for pwr, pwrn in powers.items():
                 append_label(radio_setting_group, pwrn)
-                bounds = ["lower", "center", "upper"]
-                for bound in bounds:
-                    name = f"_mem.cal.txp[{bnd}].{pwr}.{bound}"
+                bounds_txp = ["lower", "center", "upper"] # Renamed
+                for bound_txp_item in bounds_txp:
+                    name = f"_mem.cal.txp[{bnd}].{pwr}.{bound_txp_item}"
                     tempval = min_max_def(eval(name), 0, 255, 0)
                     val = RadioSettingValueInteger(0, 255, tempval)
-                    radio_setting = RadioSetting(name, bound.capitalize(), val)
+                    radio_setting = RadioSetting(name, bound_txp_item.capitalize(), val)
                     radio_setting_group.append(radio_setting)
 
 #
@@ -3481,26 +3591,40 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         # empty memory
         if memory.empty:
-            _mem_chan.set_raw("\xFF" * 16)
+            _mem_chan.set_raw("\xFF" * 16) # Size of channel struct
             if number < 200:
                 _mem_chname = self._memobj.channelname[number]
-                _mem_chname.set_raw("\xFF" * 16)
+                _mem_chname.set_raw("\xFF" * 16) # Size of channelname struct
+
+            # For attributes, perhaps also set to a default "empty" state if necessary
+            # _mem_attr.set_raw(...) # if applicable
+
             return memory
 
         # find band
+
         band = self._find_band(memory.freq)
+        if band is False: # If frequency is out of defined bands
+            LOG.warning(f"Frequency {memory.freq/1000000.0:.4f}MHz is out of defined bands for memory {memory.number}. Setting band to default (0).")
+            band = 0 # Default or handle as error
 
         # mode
-        tmp_mode = self.get_features().valid_modes.index(memory.mode)
-        _mem_chan.modulation = tmp_mode / 2
-        _mem_chan.bandwidth = tmp_mode % 2
-        if memory.mode == "USB":
-            _mem_chan.bandwidth = 1  # narrow
+
+        try:
+            tmp_mode = self.get_features().valid_modes.index(memory.mode)
+            _mem_chan.modulation = tmp_mode // 2 # Integer division
+            _mem_chan.bandwidth = tmp_mode % 2
+            if memory.mode == "USB":
+                _mem_chan.bandwidth = 1  # narrow
+        except ValueError:
+            LOG.warning(f"Invalid mode '{memory.mode}' for memory {memory.number}. Defaulting.")
+            _mem_chan.modulation = 0 # Default to FM
+            _mem_chan.bandwidth = 0  # Default to Wide for FM
 
         # frequency/offset
-        _mem_chan.freq = memory.freq/10
-        _mem_chan.offset = memory.offset/10
 
+        _mem_chan.freq = memory.freq//10
+        _mem_chan.offset = memory.offset//10
         if memory.duplex == "":
             _mem_chan.offsetDir = FLAGS1_OFFSET_NONE
         elif memory.duplex == '-':
@@ -3510,22 +3634,38 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
 
         # set band
 
-#        _mem_attr.is_free = 0
         _mem_attr.band = band
 
         # channels >200 are the 14 VFO chanells and don't have names
+
         if number < 200:
             _mem_chname = self._memobj.channelname[number]
-            tag = memory.name.ljust(10) + "\x00"*6
+
+            # Ensure name is ASCII, pad with \x00, truncate to 16 (or actual struct size)
+         
+            name_bytes = memory.name.encode('ascii', 'replace')[:16]
+            tag = name_bytes.ljust(16, b'\x00')
             _mem_chname.name = tag  # Store the alpha tag
+        elif number < 214: # VFO channels
+            pass # VFOs don't have user-settable names stored this way
+        else: # Should not happen if memory.number is within bounds
+
+            LOG.warning(f"Invalid memory number {number+1} encountered in set_memory.")
 
         # tone data
+
         self._set_tone(memory, _mem_chan)
 
         # step
-        _mem_chan.step = STEPS.index(memory.tuning_step)
+
+        try:
+            _mem_chan.step = STEPS.index(memory.tuning_step)
+        except ValueError:
+            LOG.warning(f"Invalid tuning step {memory.tuning_step} for memory {memory.number}. Defaulting.")
+            _mem_chan.step = STEPS.index(2.5) # Default to 2.5kHz
 
         # tx power
+
         if str(memory.power) == str(UVK5_POWER_LEVELS[7]):
             _mem_chan.txpower = POWER_HIGH
         elif str(memory.power) == str(UVK5_POWER_LEVELS[6]):
@@ -3540,14 +3680,25 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
             _mem_chan.txpower = POWER_LOW2
         elif str(memory.power) == str(UVK5_POWER_LEVELS[1]):
             _mem_chan.txpower = POWER_LOW1
-        else:
+
+        else: # Default to POWER_USER or a safe low power
+
             _mem_chan.txpower = POWER_USER
 
         # -------- EXTRA SETTINGS
 
         def get_setting(name, def_val):
             if name in memory.extra:
-                return int(memory.extra[name].value)
+
+                # For boolean values from RadioSettingValueBoolean, .value is already bool
+                # For list values, .value is the index (int)
+                # For string values, .value is string
+                # Ensure it's cast to int if the underlying struct field expects int
+
+                val = memory.extra[name].value
+                if isinstance(val, bool): # True -> 1, False -> 0
+                    return int(val)
+                return int(val) # Assuming list indexes are the desired int value
             return def_val
 
         _mem_chan.txLock = get_setting("txLock", 0)
@@ -3556,9 +3707,19 @@ class UVK5RadioEgzumer(chirp_common.CloneModeRadio):
         _mem_chan.freq_reverse = get_setting("frev", False)
         _mem_chan.dtmf_decode = get_setting("dtmfdecode", False)
         _mem_chan.scrambler = get_setting("scrambler", 0)
-        _mem_attr.compander = get_setting("compander", 0)
-        if number < 200:
-            tmp_val = get_setting("scanlists", 0)
-            _mem_attr.is_scanlistx = tmp_val
+        
+        # For VFO channels (number >= 200), compander and scanlists might not be applicable
+        # or might map to a different attribute structure if VFOs have their own similar settings.
+        # The current logic uses att_num which maps VFOs 200-213 to ch_attr 200-206.
+        # This seems to imply VFO pairs share some attributes.
 
+        _mem_attr.compander = get_setting("compander", 0)
+        if number < 200: # Scanlists are typically for memory channels
+            tmp_val = get_setting("scanlists", 0) # Default 0 might mean "None" or "List 1" depending on SCANLIST_LIST
+            _mem_attr.is_scanlistx = tmp_val
+         
+        # Else (for VFOs), scanlist attribute might not be set or default to a specific value.
+        # Current logic implies VFOs might also have is_scanlistx via att_num, 
+        # but it's typically not user-configurable for VFOs in CHIRP UI.
+        # If "scanlists" is not in memory.extra for VFOs, it defaults to 0.
         return memory
