@@ -108,7 +108,7 @@
 #       add support for Game special version
 
 #4.2.0:
-#       add support for screenshot feature
+#       add support for k5 viewer feature
 
 import webbrowser
 import os
@@ -134,7 +134,7 @@ DEBUG_SHOW_OBFUSCATED_COMMANDS = False
 DEBUG_SHOW_MEMORY_ACTIONS = False
 
 # TODO: remove the driver version when it's in mainline chirp 
-DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2025/07/27 (c) EGZUMER + F4HWN v4.2.0 FR"
+DRIVER_VERSION = "Quansheng UV-K5/K6/5R driver ver: 2025/08/07 (c) EGZUMER + F4HWN v4.2.0 FR"
 FIRMWARE_VERSION_UPDATE = "https://github.com/armel/uv-k5-firmware-custom/releases"
 
 CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/releases"
