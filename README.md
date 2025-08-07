@@ -1,6 +1,10 @@
 # uv-k5-chirp-driver
 Quansheng UV-K5 radio CHIRP driver for F4HWN firmware
 
+In version 4.2.0 :
+
+add support for k5 viewer feature
+
 In version 4.1.0 :
 
 add support for Game special version
