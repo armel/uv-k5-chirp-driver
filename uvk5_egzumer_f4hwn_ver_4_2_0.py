@@ -143,7 +143,7 @@ CHIRP_DRIVER_VERSION_UPDATE = "https://github.com/armel/uv-k5-chirp-driver/relea
 
 CHAINE_F4HWN = "https://www.youtube.com/@f4hwn" 
 
-PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/y52yr8eeeq90o7c7klk8z/MENU-FIRMWARE-F4HWN-v4.2.pdf?rlkey=p42e3124th68ovygmosj9rp40&e=1&dl=0"
+PDF_FILE_ALAIN_UPDATE = "https://www.dropbox.com/scl/fi/omuaduj45ru25y57n9yas/MENU-FIRMWARE-F4HWN-v4.2.pdf?rlkey=nzh0wu9ganfoxna58e52xf3ei&e=4&dl=0"
 PDF_FILE_QUICK_KEY = "https://github.com/armel/uv-k5-chirp-driver/blob/main/20240530%20Quick%20Keys%20F4HWNv%202.x.pdf"
 
 YOUTUBE_INFO_FUNKWELLE = "https://www.youtube.com/watch?v=4xj0-VUe5aE"
