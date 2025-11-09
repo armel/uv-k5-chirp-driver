@@ -585,7 +585,7 @@ AUTO_KEYPAD_LOCK_LIST.append("10m:00s")  # Add "10m:00s" a the end
 BATSAVE_LIST = ["OFF", "1:1", "1:2", "1:3", "1:4", "1:5"]
 
 # battery type
-BATTYPE_LIST = ["1500 mAh", "1600 mAh", "2200 mAh", "2500 mAh", "3500 mAh"]
+BATTYPE_LIST = ["1600 mAh K5", "2200 mAh K5", "3500 mAh K5", "1500 mAh K1", "2500 mAh K1"]
 # bat txt
 BAT_TXT_LIST = ["NONE", "VOLTAGE", "PERCENT"]
 # Backlight auto mode
